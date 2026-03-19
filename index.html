@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ledger — Finance Tracker</title>
+<title>Ledger — Marty Finance Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
@@ -24,126 +24,288 @@
   }
 
   * { margin:0; padding:0; box-sizing:border-box; }
+
   body {
     background:
       radial-gradient(circle at top left, #fff0e3 0, transparent 24%),
       radial-gradient(circle at top right, #ffe8dc 0, transparent 26%),
       linear-gradient(180deg, #fffaf6 0%, #fff7f0 100%);
-    color:var(--text);
-    font-family:'DM Sans',sans-serif;
-    min-height:100vh;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
   }
 
-  /* NAV */
   .app-header {
     padding: 18px 28px 0;
     border-bottom: 1px solid var(--border);
-    background: rgba(255, 248, 242, 0.92);
+    background: rgba(255, 248, 242, 0.94);
     backdrop-filter: blur(10px);
-    position: sticky; top:0; z-index:100;
-    display: flex; align-items: flex-end; justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
   }
+
   .logo { display:flex; align-items:baseline; gap:10px; padding-bottom:16px; }
-  .logo h1 { font-family:'DM Serif Display',serif; font-size:20px; font-style:italic; color:var(--text); }
-  .logo span { font-family:'DM Mono',monospace; font-size:10px; color:var(--income); letter-spacing:2px; text-transform:uppercase; }
+  .logo h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    font-style: italic;
+    color: var(--text);
+  }
+  .logo span {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--income);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
   .nav-tabs { display:flex; }
   .nav-tab {
-    font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1.5px; text-transform:uppercase;
-    padding:11px 16px; border:none; background:none; color:var(--muted); cursor:pointer;
-    border-bottom:2px solid transparent; transition:all 0.15s;
+    font-family:'DM Mono',monospace;
+    font-size:10px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    padding:11px 16px;
+    border:none;
+    background:none;
+    color:var(--muted);
+    cursor:pointer;
+    border-bottom:2px solid transparent;
+    transition:all 0.15s;
   }
-  .nav-tab.active { color:var(--text); border-bottom-color:var(--peach); }
+  .nav-tab.active {
+    color:var(--text);
+    border-bottom-color:var(--peach);
+  }
   .nav-tab:hover:not(.active) { color:var(--text); }
-  .header-date { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); padding-bottom:16px; }
 
-  /* PAGES */
+  .header-date {
+    font-family:'DM Mono',monospace;
+    font-size:10px;
+    color:var(--muted);
+    padding-bottom:16px;
+  }
+
   .page { display:none; }
   .page.active { display:block; }
 
-  /* ── TRACKER PAGE ── */
   .tracker-layout { display:grid; grid-template-columns:370px 1fr; min-height:calc(100vh - 59px); }
   .left-panel { border-right:1px solid var(--border); display:flex; flex-direction:column; }
 
   .summary-row { display:grid; grid-template-columns:1fr 1fr 1fr; border-bottom:1px solid var(--border); }
   .summary-card {
-    padding:14px 13px; border-right:1px solid var(--border);
+    padding:14px 13px;
+    border-right:1px solid var(--border);
     background: rgba(255,255,255,0.55);
   }
   .summary-card:last-child { border-right:none; }
-  .s-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:5px; }
-  .s-value { font-family:'DM Serif Display',serif; font-size:19px; }
+
+  .s-label {
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:5px;
+  }
+
+  .s-value {
+    font-family:'DM Serif Display',serif;
+    font-size:19px;
+  }
   .s-value.income { color:var(--income); }
   .s-value.expense { color:var(--expense); }
   .s-value.balance.pos { color:var(--gold); }
   .s-value.balance.neg { color:var(--expense); }
 
   .entry-form { padding:18px; border-bottom:1px solid var(--border); }
-  .form-title { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:12px; }
-  .type-toggle { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:11px; }
-  .type-btn {
-    padding:8px; border:1.5px solid var(--border); background:#fffaf7; color:var(--muted);
-    font-family:'DM Mono',monospace; font-size:11px; letter-spacing:1px; cursor:pointer; transition:all 0.15s;
-    border-radius:12px;
+  .form-title {
+    font-family:'DM Mono',monospace;
+    font-size:10px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:12px;
   }
-  .type-btn.active-income { border-color:var(--income); color:var(--income); background:rgba(103,185,141,0.10); }
-  .type-btn.active-expense { border-color:var(--expense); color:var(--expense); background:rgba(226,125,114,0.10); }
-  .field-group { margin-bottom:9px; }
-  .field-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); margin-bottom:4px; display:block; }
 
-  input[type="text"],input[type="number"],input[type="date"],select {
-    width:100%; background:var(--surface); border:1px solid var(--border); color:var(--text);
-    padding:8px 10px; font-family:'DM Sans',sans-serif; font-size:13px; outline:none;
-    transition:border-color 0.15s, box-shadow 0.15s; -webkit-appearance:none; appearance:none;
+  .type-toggle { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:11px; }
+
+  .type-btn {
+    padding:8px;
+    border:1.5px solid var(--border);
+    background:#fffaf7;
+    color:var(--muted);
+    font-family:'DM Mono',monospace;
+    font-size:11px;
+    letter-spacing:1px;
+    cursor:pointer;
+    transition:all 0.15s;
     border-radius:12px;
   }
-  input:focus,select:focus { border-color:var(--peach); box-shadow:0 0 0 4px rgba(244,162,97,0.10); }
-  input[type="date"]::-webkit-calendar-picker-indicator { filter:sepia(0.6) saturate(0.8); cursor:pointer; }
+  .type-btn.active-income {
+    border-color:var(--income);
+    color:var(--income);
+    background:rgba(103,185,141,0.10);
+  }
+  .type-btn.active-expense {
+    border-color:var(--expense);
+    color:var(--expense);
+    background:rgba(226,125,114,0.10);
+  }
+
+  .field-group { margin-bottom:9px; }
+
+  .field-label {
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:4px;
+    display:block;
+  }
+
+  input[type="text"], input[type="number"], input[type="date"], select {
+    width:100%;
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:8px 10px;
+    font-family:'DM Sans',sans-serif;
+    font-size:13px;
+    outline:none;
+    transition:border-color 0.15s, box-shadow 0.15s;
+    -webkit-appearance:none;
+    appearance:none;
+    border-radius:12px;
+  }
+
+  input:focus, select:focus {
+    border-color:var(--peach);
+    box-shadow:0 0 0 4px rgba(244,162,97,0.10);
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter:sepia(0.6) saturate(0.8);
+    cursor:pointer;
+  }
+
   select option { background:var(--surface); }
+
   .form-row { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
 
   .add-btn {
-    width:100%; padding:10px; background:var(--income); color:#ffffff; border:none;
-    font-family:'DM Mono',monospace; font-size:11px; font-weight:500; letter-spacing:1.5px;
-    text-transform:uppercase; cursor:pointer; margin-top:3px; transition:all 0.15s;
+    width:100%;
+    padding:10px;
+    background:var(--income);
+    color:#fff;
+    border:none;
+    font-family:'DM Mono',monospace;
+    font-size:11px;
+    font-weight:500;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    cursor:pointer;
+    margin-top:3px;
+    transition:all 0.15s;
     border-radius:12px;
     box-shadow: 0 8px 18px rgba(103,185,141,0.18);
   }
   .add-btn:hover { filter:brightness(1.03); transform:translateY(-1px); }
-  .add-btn.expense-mode { background:var(--expense); color:#fff; box-shadow: 0 8px 18px rgba(226,125,114,0.18); }
-  .add-btn.expense-mode:hover { filter:brightness(1.03); }
 
-  .tx-list-header { padding:12px 18px 7px; display:flex; justify-content:space-between; align-items:center; }
-  .tx-list-title { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); }
+  .add-btn.expense-mode {
+    background:var(--expense);
+    box-shadow: 0 8px 18px rgba(226,125,114,0.18);
+  }
+
+  .tx-list-header {
+    padding:12px 18px 7px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+
+  .tx-list-title {
+    font-family:'DM Mono',monospace;
+    font-size:10px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+
   .clear-btn {
-    font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); background:#fffaf7;
-    border:1px solid var(--border); padding:5px 10px; cursor:pointer; letter-spacing:1px; transition:all 0.15s;
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    color:var(--muted);
+    background:#fffaf7;
+    border:1px solid var(--border);
+    padding:5px 10px;
+    cursor:pointer;
+    letter-spacing:1px;
+    transition:all 0.15s;
     border-radius:10px;
   }
   .clear-btn:hover { color:var(--expense); border-color:var(--expense); }
-  .tx-list { flex:1; overflow-y:auto; max-height:270px; }
+
+  .tx-list { flex:1; overflow-y:auto; max-height:300px; }
   .tx-list::-webkit-scrollbar { width:5px; }
   .tx-list::-webkit-scrollbar-thumb { background:#e6cdbc; border-radius:99px; }
 
   .tx-item {
-    display:grid; grid-template-columns:auto 1fr auto auto; align-items:center; gap:9px;
-    padding:10px 18px; border-bottom:1px solid var(--border); animation:slideIn 0.2s ease;
+    display:grid;
+    grid-template-columns:auto 1fr auto auto;
+    align-items:center;
+    gap:9px;
+    padding:10px 18px;
+    border-bottom:1px solid var(--border);
     transition:background 0.1s;
   }
   .tx-item:hover { background:#fffaf7; }
-  @keyframes slideIn { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:translateX(0)} }
+
   .tx-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
   .tx-info { min-width:0; }
-  .tx-desc { font-size:12px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .tx-meta { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); margin-top:2px; }
-  .tx-amount { font-family:'DM Mono',monospace; font-size:12px; font-weight:500; white-space:nowrap; }
+  .tx-desc {
+    font-size:12px;
+    font-weight:500;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .tx-meta {
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    color:var(--muted);
+    margin-top:2px;
+  }
+  .tx-amount {
+    font-family:'DM Mono',monospace;
+    font-size:12px;
+    font-weight:500;
+    white-space:nowrap;
+  }
   .tx-delete {
-    background:none; border:none; color:#c8b09f; cursor:pointer; font-size:13px; padding:2px 3px;
-    transition:color 0.15s; line-height:1;
+    background:none;
+    border:none;
+    color:#c8b09f;
+    cursor:pointer;
+    font-size:13px;
+    padding:2px 3px;
+    transition:color 0.15s;
+    line-height:1;
   }
   .tx-delete:hover { color:var(--expense); }
+
   .empty-state {
-    padding:28px 18px; text-align:center; color:var(--muted); font-size:13px;
-    font-style:italic; font-family:'DM Serif Display',serif;
+    padding:28px 18px;
+    text-align:center;
+    color:var(--muted);
+    font-size:13px;
+    font-style:italic;
+    font-family:'DM Serif Display',serif;
   }
 
   .right-panel { display:flex; flex-direction:column; padding:20px; gap:18px; overflow-y:auto; }
@@ -161,6 +323,7 @@
     overflow:hidden;
     position:relative;
   }
+
   .marty-hero::after {
     content:"🐾";
     position:absolute;
@@ -169,6 +332,7 @@
     font-size:34px;
     opacity:0.12;
   }
+
   .marty-photo {
     width:96px;
     height:96px;
@@ -178,17 +342,20 @@
     box-shadow:0 8px 20px rgba(171,119,78,0.15);
     background:#fff;
   }
+
   .marty-photo img {
     width:100%;
     height:100%;
     object-fit:cover;
   }
+
   .marty-title {
     font-family:'DM Serif Display',serif;
     font-size:24px;
     font-style:italic;
     margin-bottom:4px;
   }
+
   .marty-sub {
     font-family:'DM Mono',monospace;
     font-size:10px;
@@ -197,6 +364,7 @@
     color:var(--income);
     margin-bottom:10px;
   }
+
   .marty-copy {
     color:var(--muted);
     font-size:13px;
@@ -211,16 +379,35 @@
     border-radius:20px;
     box-shadow: var(--shadow);
   }
+
   .chart-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
   .chart-title { font-family:'DM Serif Display',serif; font-size:16px; font-style:italic; }
-  .chart-subtitle { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; margin-top:2px; }
+  .chart-subtitle {
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    color:var(--muted);
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    margin-top:2px;
+  }
+
   .chart-tabs { display:flex; gap:4px; }
+
   .chart-tab {
-    font-family:'DM Mono',monospace; font-size:9px; padding:5px 10px; border:1px solid var(--border);
-    background:#fffaf7; color:var(--muted); cursor:pointer; letter-spacing:1px; text-transform:uppercase;
-    transition:all 0.15s; border-radius:10px;
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    padding:5px 10px;
+    border:1px solid var(--border);
+    background:#fffaf7;
+    color:var(--muted);
+    cursor:pointer;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    transition:all 0.15s;
+    border-radius:10px;
   }
   .chart-tab.active { background:var(--surface2); border-color:var(--peach); color:var(--peach); }
+
   .chart-wrap { position:relative; height:190px; }
   .charts-bottom { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
   .chart-wrap-sm { position:relative; height:155px; }
@@ -229,13 +416,38 @@
   .cat-row { display:flex; align-items:center; gap:9px; }
   .cat-bar-bg { flex:1; height:5px; background:#f4e4d8; overflow:hidden; border-radius:99px; }
   .cat-bar-fill { height:100%; transition:width 0.4s ease; border-radius:99px; }
-  .cat-name { width:76px; color:var(--muted); font-size:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .cat-pct { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); width:32px; text-align:right; }
+  .cat-name {
+    width:76px;
+    color:var(--muted);
+    font-size:10px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .cat-pct {
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    color:var(--muted);
+    width:32px;
+    text-align:right;
+  }
 
-  /* ── GOALS PAGE ── */
   .goals-layout { display:grid; grid-template-columns:390px 1fr; min-height:calc(100vh - 59px); }
-  .goals-left { border-right:1px solid var(--border); padding:20px; display:flex; flex-direction:column; gap:18px; overflow-y:auto; }
-  .goals-right { padding:20px; display:flex; flex-direction:column; gap:18px; overflow-y:auto; }
+  .goals-left {
+    border-right:1px solid var(--border);
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    overflow-y:auto;
+  }
+  .goals-right {
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    overflow-y:auto;
+  }
 
   .goals-hero {
     background: linear-gradient(135deg, #fffaf6 0%, #ffeade 100%);
@@ -248,6 +460,7 @@
     gap:14px;
     align-items:center;
   }
+
   .goals-hero-photo {
     width:78px;
     height:78px;
@@ -256,17 +469,20 @@
     border:4px solid rgba(255,255,255,0.8);
     background:#fff;
   }
+
   .goals-hero-photo img {
     width:100%;
     height:100%;
     object-fit:cover;
   }
+
   .goals-hero-title {
     font-family:'DM Serif Display',serif;
     font-size:18px;
     font-style:italic;
     margin-bottom:4px;
   }
+
   .goals-hero-sub {
     font-family:'DM Mono',monospace;
     font-size:9px;
@@ -283,11 +499,33 @@
     box-shadow: var(--shadow);
     border-radius:22px;
   }
-  .nw-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
-  .nw-value { font-family:'DM Serif Display',serif; font-size:34px; font-style:italic; }
+
+  .nw-label {
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:6px;
+  }
+
+  .nw-value {
+    font-family:'DM Serif Display',serif;
+    font-size:34px;
+    font-style:italic;
+  }
   .nw-value.pos { color:var(--income); }
   .nw-value.neg { color:var(--expense); }
-  .nw-sub { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); margin-top:8px; display:flex; gap:14px; flex-wrap:wrap; }
+
+  .nw-sub {
+    font-family:'DM Mono',monospace;
+    font-size:10px;
+    color:var(--muted);
+    margin-top:8px;
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+  }
   .nw-sub span { display:flex; align-items:center; gap:5px; }
   .nw-dot { width:6px; height:6px; border-radius:50%; display:inline-block; }
 
@@ -297,42 +535,134 @@
     border-radius:20px;
     box-shadow: var(--shadow);
   }
-  .section-head { padding:13px 16px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
-  .section-head-title { font-family:'DM Serif Display',serif; font-size:15px; font-style:italic; }
-  .section-head-sub { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; margin-top:2px; }
+
+  .section-head {
+    padding:13px 16px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+
+  .section-head-title {
+    font-family:'DM Serif Display',serif;
+    font-size:15px;
+    font-style:italic;
+  }
+
+  .section-head-sub {
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    color:var(--muted);
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    margin-top:2px;
+  }
+
   .add-item-btn {
-    font-family:'DM Mono',monospace; font-size:9px; padding:6px 11px; border:1px solid var(--border);
-    background:#fffaf7; color:var(--muted); cursor:pointer; letter-spacing:1px; transition:all 0.15s;
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    padding:6px 11px;
+    border:1px solid var(--border);
+    background:#fffaf7;
+    color:var(--muted);
+    cursor:pointer;
+    letter-spacing:1px;
+    transition:all 0.15s;
     border-radius:10px;
   }
   .add-item-btn:hover { color:var(--income); border-color:var(--income); }
+
   .section-body { padding:14px 16px; }
 
   .inline-form {
-    background:#fff8f4; border:1px solid var(--border); padding:13px; margin-bottom:10px; display:none;
+    background:#fff8f4;
+    border:1px solid var(--border);
+    padding:13px;
+    margin-bottom:10px;
+    display:none;
     border-radius:16px;
   }
   .inline-form.open { display:block; }
-  .inline-form-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:7px; }
-  .inline-submit {
-    font-family:'DM Mono',monospace; font-size:9px; padding:7px 13px; border:none;
-    background:var(--income); color:#fff; cursor:pointer; letter-spacing:1px; text-transform:uppercase; font-weight:500;
-    border-radius:10px;
+
+  .inline-form-row {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-bottom:7px;
   }
-  .inline-cancel {
-    font-family:'DM Mono',monospace; font-size:9px; padding:7px 13px; border:1px solid var(--border);
-    background:#fffaf7; color:var(--muted); cursor:pointer; letter-spacing:1px; text-transform:uppercase; margin-left:5px;
+
+  .inline-submit {
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    padding:7px 13px;
+    border:none;
+    background:var(--income);
+    color:#fff;
+    cursor:pointer;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    font-weight:500;
     border-radius:10px;
   }
 
-  .item-row { display:flex; align-items:center; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--border); }
+  .inline-cancel {
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    padding:7px 13px;
+    border:1px solid var(--border);
+    background:#fffaf7;
+    color:var(--muted);
+    cursor:pointer;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    margin-left:5px;
+    border-radius:10px;
+  }
+
+  .item-row {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:9px 0;
+    border-bottom:1px solid var(--border);
+  }
   .item-row:last-child { border-bottom:none; }
+
   .item-name { font-size:13px; font-weight:500; }
-  .item-detail { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); margin-top:2px; }
-  .item-amount { font-family:'DM Mono',monospace; font-size:13px; font-weight:600; }
-  .item-del { background:none; border:none; color:#c8b09f; cursor:pointer; font-size:13px; transition:color 0.15s; margin-left:8px; }
+
+  .item-detail {
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    color:var(--muted);
+    margin-top:2px;
+  }
+
+  .item-amount {
+    font-family:'DM Mono',monospace;
+    font-size:13px;
+    font-weight:600;
+  }
+
+  .item-del {
+    background:none;
+    border:none;
+    color:#c8b09f;
+    cursor:pointer;
+    font-size:13px;
+    transition:color 0.15s;
+    margin-left:8px;
+  }
   .item-del:hover { color:var(--expense); }
-  .no-items { color:var(--muted); font-size:12px; font-style:italic; font-family:'DM Serif Display',serif; text-align:center; padding:12px 0; }
+
+  .no-items {
+    color:var(--muted);
+    font-size:12px;
+    font-style:italic;
+    font-family:'DM Serif Display',serif;
+    text-align:center;
+    padding:12px 0;
+  }
 
   .lp-bar-bg { height:5px; background:#f4e4d8; width:100%; margin-top:5px; border-radius:99px; }
   .lp-bar-fill { height:100%; background:var(--expense); transition:width 0.4s ease; border-radius:99px; }
@@ -346,68 +676,224 @@
     border-radius:20px;
     box-shadow: var(--shadow);
   }
-  .goal-card::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; }
+
+  .goal-card::before {
+    content:'';
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:4px;
+  }
   .goal-card.savings::before { background:var(--income); }
   .goal-card.debt::before { background:var(--expense); }
   .goal-card.custom::before { background:var(--gold); }
-  .goal-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
-  .goal-name { font-family:'DM Serif Display',serif; font-size:15px; font-style:italic; padding-right:24px; }
+
+  .goal-top {
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:10px;
+  }
+
+  .goal-name {
+    font-family:'DM Serif Display',serif;
+    font-size:15px;
+    font-style:italic;
+    padding-right:24px;
+  }
+
   .goal-type-badge {
-    font-family:'DM Mono',monospace; font-size:8px; letter-spacing:1.5px; text-transform:uppercase;
-    padding:3px 7px; border:1px solid; flex-shrink:0; border-radius:999px;
+    font-family:'DM Mono',monospace;
+    font-size:8px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    padding:3px 7px;
+    border:1px solid;
+    flex-shrink:0;
+    border-radius:999px;
   }
   .badge-savings { border-color:var(--income); color:var(--income); }
   .badge-debt { border-color:var(--expense); color:var(--expense); }
   .badge-custom { border-color:var(--gold); color:var(--gold); }
-  .goal-amounts { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:9px; }
-  .goal-current { font-family:'DM Mono',monospace; font-size:20px; font-weight:600; }
-  .goal-target-info { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); text-align:right; line-height:1.5; }
+
+  .goal-amounts {
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    margin-bottom:9px;
+  }
+
+  .goal-current {
+    font-family:'DM Mono',monospace;
+    font-size:20px;
+    font-weight:600;
+  }
+
+  .goal-target-info {
+    font-family:'DM Mono',monospace;
+    font-size:10px;
+    color:var(--muted);
+    text-align:right;
+    line-height:1.5;
+  }
+
   .goal-bar-bg { height:6px; background:#f4e4d8; width:100%; margin-bottom:9px; border-radius:99px; }
   .goal-bar-fill { height:100%; transition:width 0.5s ease; border-radius:99px; }
-  .goal-meta { display:flex; justify-content:space-between; align-items:flex-end; }
-  .goal-pct { font-family:'DM Mono',monospace; font-size:12px; font-weight:600; }
-  .goal-right-meta { text-align:right; }
-  .goal-date { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); }
-  .goal-days { font-family:'DM Mono',monospace; font-size:9px; margin-top:3px; }
-  .goal-del { position:absolute; top:12px; right:12px; background:none; border:none; color:#c8b09f; cursor:pointer; font-size:14px; transition:color 0.15s; }
-  .goal-del:hover { color:var(--expense); }
-  .goals-grid { display:flex; flex-direction:column; gap:12px; }
-  .goal-notes { font-size:11px; color:var(--muted); margin-bottom:9px; font-style:italic; }
 
-  /* GOAL FORM MODAL */
-  .goal-form-overlay { display:none; position:fixed; inset:0; background:rgba(66,38,22,0.45); z-index:200; align-items:center; justify-content:center; backdrop-filter: blur(4px); }
-  .goal-form-overlay.open { display:flex; }
-  .goal-form-box {
-    background:var(--surface); border:1px solid var(--border); padding:26px; width:420px; max-width:92vw;
-    animation:popIn 0.2s ease; border-radius:22px; box-shadow:0 18px 40px rgba(120,80,50,0.20);
+  .goal-meta {
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
   }
-  @keyframes popIn { from{opacity:0;transform:scale(0.96)} to{opacity:1;transform:scale(1)} }
-  .gf-title { font-family:'DM Serif Display',serif; font-size:20px; font-style:italic; margin-bottom:18px; }
+
+  .goal-pct {
+    font-family:'DM Mono',monospace;
+    font-size:12px;
+    font-weight:600;
+  }
+
+  .goal-right-meta { text-align:right; }
+  .goal-date {
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    color:var(--muted);
+  }
+  .goal-days {
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    margin-top:3px;
+  }
+
+  .goal-del {
+    position:absolute;
+    top:12px;
+    right:12px;
+    background:none;
+    border:none;
+    color:#c8b09f;
+    cursor:pointer;
+    font-size:14px;
+    transition:color 0.15s;
+  }
+  .goal-del:hover { color:var(--expense); }
+
+  .goals-grid { display:flex; flex-direction:column; gap:12px; }
+  .goal-notes {
+    font-size:11px;
+    color:var(--muted);
+    margin-bottom:9px;
+    font-style:italic;
+  }
+
+  .goal-form-overlay {
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(66,38,22,0.45);
+    z-index:200;
+    align-items:center;
+    justify-content:center;
+    backdrop-filter: blur(4px);
+  }
+  .goal-form-overlay.open { display:flex; }
+
+  .goal-form-box {
+    background:var(--surface);
+    border:1px solid var(--border);
+    padding:26px;
+    width:420px;
+    max-width:92vw;
+    border-radius:22px;
+    box-shadow:0 18px 40px rgba(120,80,50,0.20);
+  }
+
+  .gf-title {
+    font-family:'DM Serif Display',serif;
+    font-size:20px;
+    font-style:italic;
+    margin-bottom:18px;
+  }
+
   .gf-row { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-bottom:9px; }
   .gf-full { margin-bottom:9px; }
+
   .gf-actions { display:flex; gap:8px; margin-top:14px; }
+
   .gf-save {
-    flex:1; padding:11px; background:var(--income); color:#fff; border:none;
-    font-family:'DM Mono',monospace; font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase; cursor:pointer;
+    flex:1;
+    padding:11px;
+    background:var(--income);
+    color:#fff;
+    border:none;
+    font-family:'DM Mono',monospace;
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    cursor:pointer;
     border-radius:12px;
   }
+
   .gf-close {
-    padding:11px 15px; border:1px solid var(--border); background:#fffaf7; color:var(--muted);
-    font-family:'DM Mono',monospace; font-size:11px; cursor:pointer; border-radius:12px;
+    padding:11px 15px;
+    border:1px solid var(--border);
+    background:#fffaf7;
+    color:var(--muted);
+    font-family:'DM Mono',monospace;
+    font-size:11px;
+    cursor:pointer;
+    border-radius:12px;
   }
 
   .nw-chart-wrap { position:relative; height:170px; }
-  .section-total-row { border-top:1px solid var(--border); margin-top:9px; padding-top:9px; display:flex; justify-content:space-between; align-items:center; }
-  .section-total-label { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
+
+  .section-total-row {
+    border-top:1px solid var(--border);
+    margin-top:9px;
+    padding-top:9px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+
+  .section-total-label {
+    font-family:'DM Mono',monospace;
+    font-size:9px;
+    color:var(--muted);
+    letter-spacing:1px;
+    text-transform:uppercase;
+  }
 
   .toast {
-    position:fixed; bottom:18px; right:18px; background:var(--income); color:#fff;
-    padding:10px 15px; font-family:'DM Mono',monospace; font-size:11px; font-weight:500; letter-spacing:1px;
-    opacity:0; transform:translateY(8px); transition:all 0.2s ease; pointer-events:none; z-index:999;
-    border-radius:12px; box-shadow: var(--shadow);
+    position:fixed;
+    bottom:18px;
+    right:18px;
+    background:var(--income);
+    color:#fff;
+    padding:10px 15px;
+    font-family:'DM Mono',monospace;
+    font-size:11px;
+    font-weight:500;
+    letter-spacing:1px;
+    opacity:0;
+    transform:translateY(8px);
+    transition:all 0.2s ease;
+    pointer-events:none;
+    z-index:999;
+    border-radius:12px;
+    box-shadow: var(--shadow);
   }
-  .toast.show { opacity:1; transform:translateY(0); }
-  .toast.error { background:var(--expense); color:#fff; }
+
+  .toast.show {
+    opacity:1;
+    transform:translateY(0);
+  }
+
+  .toast.error {
+    background:var(--expense);
+    color:#fff;
+  }
 
   @media(max-width:860px) {
     .tracker-layout,.goals-layout { grid-template-columns:1fr; }
@@ -423,246 +909,341 @@
 <header class="app-header">
   <div class="logo"><h1>Ledger</h1><span>Marty Finance Tracker</span></div>
   <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showPage('tracker',this)">Transactions</button>
-    <button class="nav-tab" onclick="showPage('goals',this)">Goals & Debts</button>
+    <button class="nav-tab active" id="tab-tracker">Transactions</button>
+    <button class="nav-tab" id="tab-goals">Goals & Debts</button>
   </div>
   <div class="header-date" id="headerDate"></div>
 </header>
 
-<!-- PAGE 1: TRACKER -->
 <div class="page active" id="page-tracker">
-<div class="tracker-layout">
-  <div class="left-panel">
-    <div class="summary-row">
-      <div class="summary-card"><div class="s-label">Income</div><div class="s-value income" id="totalIncome">$0</div></div>
-      <div class="summary-card"><div class="s-label">Expenses</div><div class="s-value expense" id="totalExpense">$0</div></div>
-      <div class="summary-card"><div class="s-label">Balance</div><div class="s-value balance pos" id="totalBalance">$0</div></div>
-    </div>
-    <div class="entry-form">
-      <div class="form-title">New Entry</div>
-      <div class="type-toggle">
-        <button class="type-btn active-income" id="btnIncome" onclick="setType('income')">↑ Income</button>
-        <button class="type-btn" id="btnExpense" onclick="setType('expense')">↓ Expense</button>
-      </div>
-      <div class="field-group"><label class="field-label">Description</label><input type="text" id="desc" placeholder="e.g. Monthly salary, Groceries…"/></div>
-      <div class="form-row">
-        <div class="field-group"><label class="field-label">Amount ($)</label><input type="number" id="amount" placeholder="0.00" min="0" step="0.01"/></div>
-        <div class="field-group"><label class="field-label">Date</label><input type="date" id="txDate"/></div>
-      </div>
-      <div class="field-group">
-        <label class="field-label">Category</label>
-        <select id="category">
-          <option>General</option><option>Salary</option><option>Freelance</option><option>Investment</option>
-          <option>Food</option><option>Transport</option><option>Housing</option><option>Health</option>
-          <option>Entertainment</option><option>Shopping</option><option>Utilities</option><option>Other</option>
-        </select>
+  <div class="tracker-layout">
+    <div class="left-panel">
+      <div class="summary-row">
+        <div class="summary-card"><div class="s-label">Income</div><div class="s-value income" id="totalIncome">$0.00</div></div>
+        <div class="summary-card"><div class="s-label">Expenses</div><div class="s-value expense" id="totalExpense">$0.00</div></div>
+        <div class="summary-card"><div class="s-label">Balance</div><div class="s-value balance pos" id="totalBalance">$0.00</div></div>
       </div>
 
-      <!-- SMART ROUTING: shown conditionally -->
-      <div id="routingIncome" style="display:none">
-        <div style="height:1px;background:var(--border);margin:4px 0 10px;"></div>
-        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);margin-bottom:8px;">↳ Save to Account</div>
-        <div class="field-group">
-          <label class="field-label">Deposit into Bank Account</label>
-          <select id="routeBankSel">
-            <option value="">— Don't link to account —</option>
-          </select>
+      <div class="entry-form">
+        <div class="form-title">New Entry</div>
+        <div class="type-toggle">
+          <button class="type-btn active-income" id="btnIncome" type="button">↑ Income</button>
+          <button class="type-btn" id="btnExpense" type="button">↓ Expense</button>
         </div>
-      </div>
 
-      <div id="routingExpense" style="display:none">
-        <div style="height:1px;background:var(--border);margin:4px 0 10px;"></div>
-        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--expense);margin-bottom:8px;">↳ Link to Debt or Account</div>
+        <div class="field-group">
+          <label class="field-label" for="desc">Description</label>
+          <input type="text" id="desc" placeholder="e.g. Monthly salary, Groceries…" />
+        </div>
+
         <div class="form-row">
           <div class="field-group">
-            <label class="field-label">Pay from Bank Account</label>
-            <select id="routePayFromSel">
-              <option value="">— Don't link —</option>
-            </select>
+            <label class="field-label" for="amount">Amount ($)</label>
+            <input type="number" id="amount" placeholder="0.00" min="0" step="0.01" />
           </div>
           <div class="field-group">
-            <label class="field-label">Apply to Debt (optional)</label>
-            <select id="routeDebtSel">
-              <option value="">— Not a debt payment —</option>
+            <label class="field-label" for="txDate">Date</label>
+            <input type="date" id="txDate" />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="category">Category</label>
+          <select id="category">
+            <option>General</option>
+            <option>Salary</option>
+            <option>Freelance</option>
+            <option>Investment</option>
+            <option>Food</option>
+            <option>Transport</option>
+            <option>Housing</option>
+            <option>Health</option>
+            <option>Entertainment</option>
+            <option>Shopping</option>
+            <option>Utilities</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div id="routingIncome" style="display:none">
+          <div style="height:1px;background:var(--border);margin:4px 0 10px;"></div>
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);margin-bottom:8px;">↳ Save to Account</div>
+          <div class="field-group">
+            <label class="field-label" for="routeBankSel">Deposit into Bank Account</label>
+            <select id="routeBankSel">
+              <option value="">— Don't link to account —</option>
             </select>
           </div>
         </div>
-        <div id="debtPayoffNote" style="display:none;font-family:'DM Mono',monospace;font-size:9px;color:var(--expense);padding:6px 9px;border:1px solid rgba(226,125,114,0.30);background:rgba(226,125,114,0.06);margin-top:2px;border-radius:10px;"></div>
+
+        <div id="routingExpense" style="display:none">
+          <div style="height:1px;background:var(--border);margin:4px 0 10px;"></div>
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--expense);margin-bottom:8px;">↳ Link to Debt or Account</div>
+          <div class="form-row">
+            <div class="field-group">
+              <label class="field-label" for="routePayFromSel">Pay from Bank Account</label>
+              <select id="routePayFromSel">
+                <option value="">— Don't link —</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="routeDebtSel">Apply to Debt (optional)</label>
+              <select id="routeDebtSel">
+                <option value="">— Not a debt payment —</option>
+              </select>
+            </div>
+          </div>
+          <div id="debtPayoffNote" style="display:none;font-family:'DM Mono',monospace;font-size:9px;color:var(--expense);padding:6px 9px;border:1px solid rgba(226,125,114,0.30);background:rgba(226,125,114,0.06);margin-top:2px;border-radius:10px;"></div>
+        </div>
+
+        <button class="add-btn" id="addBtn" type="button">+ Add Income</button>
       </div>
 
-      <button class="add-btn" id="addBtn" onclick="addTransaction()">+ Add Income</button>
-    </div>
-    <div class="tx-list-header">
-      <div class="tx-list-title">Transactions</div>
-      <button class="clear-btn" onclick="clearAll()">Clear All</button>
-    </div>
-    <div class="tx-list" id="txList"><div class="empty-state">No transactions yet.<br>Add your first entry above.</div></div>
-  </div>
-
-  <div class="right-panel">
-    <div class="marty-hero">
-      <div class="marty-photo">
-        <img src="marty.jpg" alt="Marty">
+      <div class="tx-list-header">
+        <div class="tx-list-title">Transactions</div>
+        <button class="clear-btn" id="clearBtn" type="button">Clear All</button>
       </div>
-      <div>
-        <div class="marty-title">Marty’s Ledger</div>
-        <div class="marty-sub">orange cat approved budgeting</div>
-        <div class="marty-copy">
-          Track your cash flow, savings, debts, and goals in one cozy dashboard.
-          Same finance engine as before — now with Marty supervising your money decisions.
+
+      <div class="tx-list" id="txList">
+        <div class="empty-state">No transactions yet.<br>Add your first entry above.</div>
+      </div>
+    </div>
+
+    <div class="right-panel">
+      <div class="marty-hero">
+        <div class="marty-photo">
+          <img src="marty.jpg" alt="Marty">
+        </div>
+        <div>
+          <div class="marty-title">Marty’s Ledger</div>
+          <div class="marty-sub">orange cat approved budgeting</div>
+          <div class="marty-copy">
+            Track your cash flow, savings, debts, and goals in one cozy dashboard.
+            Same finance engine, now with much better vibes.
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="chart-card">
-      <div class="chart-header">
-        <div><div class="chart-title">Cash Flow Over Time</div><div class="chart-subtitle">Income & Expenses · Daily</div></div>
-        <div class="chart-tabs">
-          <button class="chart-tab active" onclick="switchMainChart('bar',this)">Bar</button>
-          <button class="chart-tab" onclick="switchMainChart('line',this)">Line</button>
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Cash Flow Over Time</div>
+            <div class="chart-subtitle">Income & Expenses · Daily</div>
+          </div>
+          <div class="chart-tabs">
+            <button class="chart-tab active" id="mainBarBtn" type="button">Bar</button>
+            <button class="chart-tab" id="mainLineBtn" type="button">Line</button>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="mainChart"></canvas></div>
+      </div>
+
+      <div class="charts-bottom">
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <div class="chart-title">Split</div>
+              <div class="chart-subtitle">Income vs Expenses</div>
+            </div>
+          </div>
+          <div class="chart-wrap-sm"><canvas id="donutChart"></canvas></div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <div class="chart-title">By Category</div>
+              <div class="chart-subtitle">Expense Breakdown</div>
+            </div>
+          </div>
+          <div class="category-list" id="categoryList">
+            <div style="color:var(--muted);font-size:12px;font-style:italic">No expense data yet</div>
+          </div>
         </div>
       </div>
-      <div class="chart-wrap"><canvas id="mainChart"></canvas></div>
-    </div>
-    <div class="charts-bottom">
+
       <div class="chart-card">
-        <div class="chart-header"><div><div class="chart-title">Split</div><div class="chart-subtitle">Income vs Expenses</div></div></div>
-        <div class="chart-wrap-sm"><canvas id="donutChart"></canvas></div>
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Running Balance</div>
+            <div class="chart-subtitle">Cumulative Net Position</div>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="balanceChart"></canvas></div>
       </div>
-      <div class="chart-card">
-        <div class="chart-header"><div><div class="chart-title">By Category</div><div class="chart-subtitle">Expense Breakdown</div></div></div>
-        <div class="category-list" id="categoryList"><div style="color:var(--muted);font-size:12px;font-style:italic">No expense data yet</div></div>
-      </div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-header"><div><div class="chart-title">Running Balance</div><div class="chart-subtitle">Cumulative Net Position</div></div></div>
-      <div class="chart-wrap"><canvas id="balanceChart"></canvas></div>
     </div>
   </div>
 </div>
-</div>
 
-<!-- PAGE 2: GOALS & DEBTS -->
 <div class="page" id="page-goals">
-<div class="goals-layout">
-  <div class="goals-left">
-
-    <!-- NET WORTH -->
-    <div class="net-worth-banner">
-      <div class="nw-label">Net Worth Snapshot</div>
-      <div class="nw-value pos" id="netWorthValue">$0.00</div>
-      <div class="nw-sub">
-        <span><span class="nw-dot" style="background:var(--blue)"></span><span id="nwCash">Cash $0</span></span>
-        <span><span class="nw-dot" style="background:var(--expense)"></span><span id="nwDebt">Debt $0</span></span>
-        <span><span class="nw-dot" style="background:var(--income)"></span><span id="nwTxBal">Tx $0</span></span>
+  <div class="goals-layout">
+    <div class="goals-left">
+      <div class="net-worth-banner">
+        <div class="nw-label">Net Worth Snapshot</div>
+        <div class="nw-value pos" id="netWorthValue">$0.00</div>
+        <div class="nw-sub">
+          <span><span class="nw-dot" style="background:var(--blue)"></span><span id="nwCash">Cash $0.00</span></span>
+          <span><span class="nw-dot" style="background:var(--expense)"></span><span id="nwDebt">Debt $0.00</span></span>
+          <span><span class="nw-dot" style="background:var(--income)"></span><span id="nwTxBal">Tx $0.00</span></span>
+        </div>
       </div>
-    </div>
 
-    <!-- CASH IN BANK -->
-    <div class="section-block">
-      <div class="section-head">
-        <div><div class="section-head-title">Cash in Bank</div><div class="section-head-sub">Accounts & Savings</div></div>
-        <button class="add-item-btn" onclick="toggleForm('bankForm')">+ Add</button>
-      </div>
-      <div class="section-body">
-        <div class="inline-form" id="bankForm">
-          <div class="inline-form-row">
-            <div class="field-group"><label class="field-label">Account Name</label><input type="text" id="bankName" placeholder="e.g. Chase Checking"/></div>
-            <div class="field-group"><label class="field-label">Balance ($)</label><input type="number" id="bankAmount" placeholder="0.00" min="0" step="0.01"/></div>
+      <div class="section-block">
+        <div class="section-head">
+          <div>
+            <div class="section-head-title">Cash in Bank</div>
+            <div class="section-head-sub">Accounts & Savings</div>
           </div>
-          <button class="inline-submit" onclick="addBankAccount()">Save</button>
-          <button class="inline-cancel" onclick="toggleForm('bankForm')">Cancel</button>
+          <button class="add-item-btn" id="openBankFormBtn" type="button">+ Add</button>
         </div>
-        <div id="bankList"><div class="no-items">No accounts added yet</div></div>
-        <div class="section-total-row">
-          <span class="section-total-label">Total Cash</span>
-          <span class="item-amount" style="color:var(--blue)" id="totalCash">$0.00</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- LOANS -->
-    <div class="section-block">
-      <div class="section-head">
-        <div><div class="section-head-title">Loans & Debts</div><div class="section-head-sub">Outstanding Balances</div></div>
-        <button class="add-item-btn" onclick="toggleForm('loanForm')">+ Add</button>
-      </div>
-      <div class="section-body">
-        <div class="inline-form" id="loanForm">
-          <div class="inline-form-row">
-            <div class="field-group"><label class="field-label">Loan Name</label><input type="text" id="loanName" placeholder="e.g. Car Loan"/></div>
-            <div class="field-group"><label class="field-label">Amount Owed ($)</label><input type="number" id="loanTotal" placeholder="0.00" min="0" step="0.01"/></div>
+        <div class="section-body">
+          <div class="inline-form" id="bankForm">
+            <div class="inline-form-row">
+              <div class="field-group">
+                <label class="field-label" for="bankName">Account Name</label>
+                <input type="text" id="bankName" placeholder="e.g. Chase Checking" />
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="bankAmount">Balance ($)</label>
+                <input type="number" id="bankAmount" placeholder="0.00" min="0" step="0.01" />
+              </div>
+            </div>
+            <button class="inline-submit" id="saveBankBtn" type="button">Save</button>
+            <button class="inline-cancel" id="cancelBankBtn" type="button">Cancel</button>
           </div>
-          <div class="inline-form-row">
-            <div class="field-group"><label class="field-label">Original Amount ($)</label><input type="number" id="loanOriginal" placeholder="0.00" min="0" step="0.01"/></div>
-            <div class="field-group"><label class="field-label">Interest Rate (%)</label><input type="number" id="loanRate" placeholder="e.g. 5.5" min="0" step="0.01"/></div>
+          <div id="bankList"><div class="no-items">No accounts added yet</div></div>
+          <div class="section-total-row">
+            <span class="section-total-label">Total Cash</span>
+            <span class="item-amount" style="color:var(--blue)" id="totalCash">$0.00</span>
           </div>
-          <button class="inline-submit" onclick="addLoan()">Save</button>
-          <button class="inline-cancel" onclick="toggleForm('loanForm')">Cancel</button>
-        </div>
-        <div id="loanList"><div class="no-items">No loans added yet</div></div>
-        <div class="section-total-row">
-          <span class="section-total-label">Total Debt</span>
-          <span class="item-amount" style="color:var(--expense)" id="totalDebt">$0.00</span>
         </div>
       </div>
-    </div>
 
-    <!-- WEALTH CHART -->
-    <div class="section-block">
-      <div class="section-head"><div><div class="section-head-title">Wealth Breakdown</div><div class="section-head-sub">Assets vs Liabilities</div></div></div>
-      <div style="padding:14px 16px"><div class="nw-chart-wrap"><canvas id="nwChart"></canvas></div></div>
-    </div>
-
-  </div>
-
-  <!-- GOALS RIGHT -->
-  <div class="goals-right">
-    <div class="goals-hero">
-      <div class="goals-hero-photo">
-        <img src="marty.jpg" alt="Marty">
+      <div class="section-block">
+        <div class="section-head">
+          <div>
+            <div class="section-head-title">Loans & Debts</div>
+            <div class="section-head-sub">Outstanding Balances</div>
+          </div>
+          <button class="add-item-btn" id="openLoanFormBtn" type="button">+ Add</button>
+        </div>
+        <div class="section-body">
+          <div class="inline-form" id="loanForm">
+            <div class="inline-form-row">
+              <div class="field-group">
+                <label class="field-label" for="loanName">Loan Name</label>
+                <input type="text" id="loanName" placeholder="e.g. Car Loan" />
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="loanTotal">Amount Owed ($)</label>
+                <input type="number" id="loanTotal" placeholder="0.00" min="0" step="0.01" />
+              </div>
+            </div>
+            <div class="inline-form-row">
+              <div class="field-group">
+                <label class="field-label" for="loanOriginal">Original Amount ($)</label>
+                <input type="number" id="loanOriginal" placeholder="0.00" min="0" step="0.01" />
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="loanRate">Interest Rate (%)</label>
+                <input type="number" id="loanRate" placeholder="e.g. 5.5" min="0" step="0.01" />
+              </div>
+            </div>
+            <button class="inline-submit" id="saveLoanBtn" type="button">Save</button>
+            <button class="inline-cancel" id="cancelLoanBtn" type="button">Cancel</button>
+          </div>
+          <div id="loanList"><div class="no-items">No loans added yet</div></div>
+          <div class="section-total-row">
+            <span class="section-total-label">Total Debt</span>
+            <span class="item-amount" style="color:var(--expense)" id="totalDebt">$0.00</span>
+          </div>
+        </div>
       </div>
-      <div>
-        <div class="goals-hero-title">Goals with Marty</div>
-        <div class="goals-hero-sub">Set targets · Track progress · Pay things off · Save with style</div>
+
+      <div class="section-block">
+        <div class="section-head">
+          <div>
+            <div class="section-head-title">Wealth Breakdown</div>
+            <div class="section-head-sub">Assets vs Liabilities</div>
+          </div>
+        </div>
+        <div style="padding:14px 16px">
+          <div class="nw-chart-wrap"><canvas id="nwChart"></canvas></div>
+        </div>
       </div>
     </div>
 
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <div>
-        <div style="font-family:'DM Serif Display',serif;font-size:21px;font-style:italic">Financial Goals</div>
-        <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:3px">Set targets · Track progress · Hit milestones</div>
+    <div class="goals-right">
+      <div class="goals-hero">
+        <div class="goals-hero-photo">
+          <img src="marty.jpg" alt="Marty">
+        </div>
+        <div>
+          <div class="goals-hero-title">Goals with Marty</div>
+          <div class="goals-hero-sub">Set targets · Track progress · Pay things off · Save with style</div>
+        </div>
       </div>
-      <button style="font-family:'DM Mono',monospace;font-size:10px;padding:9px 16px;border:1px solid var(--income);background:#fffaf7;color:var(--income);cursor:pointer;letter-spacing:1px;text-transform:uppercase;transition:all 0.15s;border-radius:12px" onmouseover="this.style.background='rgba(103,185,141,0.08)'" onmouseout="this.style.background='#fffaf7'" onclick="openGoalForm()">+ New Goal</button>
-    </div>
-    <div class="goals-grid" id="goalsList">
-      <div style="text-align:center;padding:48px 20px;color:var(--muted);font-family:'DM Serif Display',serif;font-style:italic;font-size:16px;border:1px dashed var(--border);border-radius:18px;background:#fffdfb">
-        No goals yet.<br><span style="font-size:12px;font-family:'DM Mono',monospace;letter-spacing:1px">Add your first goal to start tracking.</span>
+
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-family:'DM Serif Display',serif;font-size:21px;font-style:italic">Financial Goals</div>
+          <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:3px">Set targets · Track progress · Hit milestones</div>
+        </div>
+        <button id="openGoalFormBtn" type="button" style="font-family:'DM Mono',monospace;font-size:10px;padding:9px 16px;border:1px solid var(--income);background:#fffaf7;color:var(--income);cursor:pointer;letter-spacing:1px;text-transform:uppercase;transition:all 0.15s;border-radius:12px">+ New Goal</button>
+      </div>
+
+      <div class="goals-grid" id="goalsList">
+        <div style="text-align:center;padding:48px 20px;color:var(--muted);font-family:'DM Serif Display',serif;font-style:italic;font-size:16px;border:1px dashed var(--border);border-radius:18px;background:#fffdfb">
+          No goals yet.<br><span style="font-size:12px;font-family:'DM Mono',monospace;letter-spacing:1px">Add your first goal to start tracking.</span>
+        </div>
       </div>
     </div>
   </div>
 </div>
-</div>
 
-<!-- GOAL MODAL -->
 <div class="goal-form-overlay" id="goalFormOverlay">
   <div class="goal-form-box">
     <div class="gf-title">New Financial Goal</div>
-    <div class="gf-full field-group"><label class="field-label">Goal Name</label><input type="text" id="gfName" placeholder="e.g. Pay off car loan, Emergency fund…"/></div>
+
+    <div class="gf-full field-group">
+      <label class="field-label" for="gfName">Goal Name</label>
+      <input type="text" id="gfName" placeholder="e.g. Pay off car loan, Emergency fund…" />
+    </div>
+
     <div class="gf-row">
-      <div class="field-group"><label class="field-label">Goal Type</label>
-        <select id="gfType"><option value="savings">Savings</option><option value="debt">Debt Payoff</option><option value="custom">Custom</option></select>
+      <div class="field-group">
+        <label class="field-label" for="gfType">Goal Type</label>
+        <select id="gfType">
+          <option value="savings">Savings</option>
+          <option value="debt">Debt Payoff</option>
+          <option value="custom">Custom</option>
+        </select>
       </div>
-      <div class="field-group"><label class="field-label">Target Amount ($)</label><input type="number" id="gfTarget" placeholder="0.00" min="0" step="0.01"/></div>
+      <div class="field-group">
+        <label class="field-label" for="gfTarget">Target Amount ($)</label>
+        <input type="number" id="gfTarget" placeholder="0.00" min="0" step="0.01" />
+      </div>
     </div>
+
     <div class="gf-row">
-      <div class="field-group"><label class="field-label">Current Progress ($)</label><input type="number" id="gfCurrent" placeholder="0.00" min="0" step="0.01"/></div>
-      <div class="field-group"><label class="field-label">Target Date</label><input type="date" id="gfDate"/></div>
+      <div class="field-group">
+        <label class="field-label" for="gfCurrent">Current Progress ($)</label>
+        <input type="number" id="gfCurrent" placeholder="0.00" min="0" step="0.01" />
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="gfDate">Target Date</label>
+        <input type="date" id="gfDate" />
+      </div>
     </div>
-    <div class="gf-full field-group"><label class="field-label">Notes (optional)</label><input type="text" id="gfNotes" placeholder="Any additional notes…"/></div>
+
+    <div class="gf-full field-group">
+      <label class="field-label" for="gfNotes">Notes (optional)</label>
+      <input type="text" id="gfNotes" placeholder="Any additional notes…" />
+    </div>
+
     <div class="gf-actions">
-      <button class="gf-save" onclick="saveGoal()">Save Goal</button>
-      <button class="gf-close" onclick="closeGoalForm()">Cancel</button>
+      <button class="gf-save" id="saveGoalBtn" type="button">Save Goal</button>
+      <button class="gf-close" id="closeGoalFormBtn" type="button">Cancel</button>
     </div>
   </div>
 </div>
@@ -670,448 +1251,931 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ── STATE ──
-let transactions = JSON.parse(localStorage.getItem('ldg_tx')    || '[]');
-let bankAccounts = JSON.parse(localStorage.getItem('ldg_bank')  || '[]');
-let loans        = JSON.parse(localStorage.getItem('ldg_loans') || '[]');
-let goals        = JSON.parse(localStorage.getItem('ldg_goals') || '[]');
-let currentType  = 'income';
-let mainChartType = 'bar';
-let mainCI, donutCI, balCI, nwCI;
+(function () {
+  "use strict";
 
-document.addEventListener('DOMContentLoaded', () => {
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById('txDate').value = today;
-  document.getElementById('gfDate').value = today;
-  document.getElementById('headerDate').textContent =
-    new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  document.getElementById('amount').addEventListener('input', updateDebtNote);
-  document.getElementById('routeDebtSel').addEventListener('change', updateDebtNote);
-  renderAll();
-});
+  const STORAGE_KEYS = {
+    tx: "ldg_tx",
+    bank: "ldg_bank",
+    loans: "ldg_loans",
+    goals: "ldg_goals"
+  };
 
-function showPage(name, btn) {
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
-  document.getElementById('page-'+name).classList.add('active');
-  btn.classList.add('active');
-  if(name==='goals') renderGoalsPage();
-}
+  let transactions = safeParse(STORAGE_KEYS.tx, []);
+  let bankAccounts = safeParse(STORAGE_KEYS.bank, []);
+  let loans = safeParse(STORAGE_KEYS.loans, []);
+  let goals = safeParse(STORAGE_KEYS.goals, []);
+  let currentType = "income";
+  let mainChartType = "bar";
+  let mainCI = null;
+  let donutCI = null;
+  let balCI = null;
+  let nwCI = null;
 
-function persist() {
-  localStorage.setItem('ldg_tx',    JSON.stringify(transactions));
-  localStorage.setItem('ldg_bank',  JSON.stringify(bankAccounts));
-  localStorage.setItem('ldg_loans', JSON.stringify(loans));
-  localStorage.setItem('ldg_goals', JSON.stringify(goals));
-}
+  const $ = (id) => document.getElementById(id);
 
-function renderAll() {
-  renderSummary(); renderList(); renderCharts(); renderGoalsPage(); refreshRoutingDropdowns();
-}
-
-// TYPE TOGGLE
-function setType(t) {
-  currentType = t;
-  document.getElementById('btnIncome').className = 'type-btn'+(t==='income'?' active-income':'');
-  document.getElementById('btnExpense').className = 'type-btn'+(t==='expense'?' active-expense':'');
-  const btn = document.getElementById('addBtn');
-  btn.textContent = t==='income'?'+ Add Income':'+ Add Expense';
-  btn.className = 'add-btn'+(t==='expense'?' expense-mode':'');
-  document.getElementById('routingIncome').style.display = t==='income' ? 'block' : 'none';
-  document.getElementById('routingExpense').style.display = t==='expense' ? 'block' : 'none';
-  refreshRoutingDropdowns();
-}
-
-function refreshRoutingDropdowns() {
-  // Bank deposit selector (income)
-  const bankSel = document.getElementById('routeBankSel');
-  const cur1 = bankSel.value;
-  bankSel.innerHTML = '<option value="">— Don\\'t link to account —</option>' +
-    bankAccounts.map(a=>`<option value="${a.id}">${esc(a.name)} (${fmt(a.amount)})</option>`).join('');
-  if(cur1) bankSel.value = cur1;
-
-  // Pay-from selector (expense)
-  const fromSel = document.getElementById('routePayFromSel');
-  const cur2 = fromSel.value;
-  fromSel.innerHTML = '<option value="">— Don\\'t link —</option>' +
-    bankAccounts.map(a=>`<option value="${a.id}">${esc(a.name)} (${fmt(a.amount)})</option>`).join('');
-  if(cur2) fromSel.value = cur2;
-
-  // Debt selector (expense)
-  const debtSel = document.getElementById('routeDebtSel');
-  const cur3 = debtSel.value;
-  debtSel.innerHTML = '<option value="">— Not a debt payment —</option>' +
-    loans.map(l=>`<option value="${l.id}">${esc(l.name)} (owes ${fmt(l.total)})</option>`).join('');
-  if(cur3) debtSel.value = cur3;
-  updateDebtNote();
-}
-
-function updateDebtNote() {
-  const debtId = parseInt(document.getElementById('routeDebtSel').value);
-  const amount = parseFloat(document.getElementById('amount').value)||0;
-  const note = document.getElementById('debtPayoffNote');
-  if(!debtId || !amount){ note.style.display='none'; return; }
-  const loan = loans.find(l=>l.id===debtId);
-  if(!loan){ note.style.display='none'; return; }
-  const after = Math.max(0, loan.total - amount);
-  note.style.display='block';
-  note.textContent = `Will reduce "${loan.name}" from ${fmt(loan.total)} → ${fmt(after)}`;
-}
-
-// TRANSACTIONS
-function addTransaction() {
-  const desc = document.getElementById('desc').value.trim();
-  const amount = parseFloat(document.getElementById('amount').value);
-  const date = document.getElementById('txDate').value;
-  const category = document.getElementById('category').value;
-  if(!desc){showToast('Enter a description',true);return;}
-  if(!amount||amount<=0){showToast('Enter a valid amount',true);return;}
-  if(!date){showToast('Select a date',true);return;}
-
-  // Routing
-  let routeBankId = null, routeDebtId = null, routeFromId = null;
-  let toastExtra = '';
-
-  if(currentType === 'income') {
-    routeBankId = parseInt(document.getElementById('routeBankSel').value) || null;
-    if(routeBankId) {
-      const acc = bankAccounts.find(a=>a.id===routeBankId);
-      if(acc){ acc.amount = parseFloat((acc.amount + amount).toFixed(2)); toastExtra = ` → ${acc.name} +${fmt(amount)}`; }
-    }
-  } else {
-    routeFromId = parseInt(document.getElementById('routePayFromSel').value) || null;
-    routeDebtId = parseInt(document.getElementById('routeDebtSel').value) || null;
-    if(routeFromId) {
-      const acc = bankAccounts.find(a=>a.id===routeFromId);
-      if(acc){ acc.amount = parseFloat((acc.amount - amount).toFixed(2)); }
-    }
-    if(routeDebtId) {
-      const loan = loans.find(l=>l.id===routeDebtId);
-      if(loan){
-        loan.total = parseFloat(Math.max(0, loan.total - amount).toFixed(2));
-        toastExtra = ` → ${loan.name} reduced`;
-      }
+  function safeParse(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return fallback;
+      const parsed = JSON.parse(raw);
+      return Array.isArray(fallback) ? (Array.isArray(parsed) ? parsed : fallback) : (parsed ?? fallback);
+    } catch {
+      return fallback;
     }
   }
 
-  transactions.push({id:Date.now(), type:currentType, desc, amount, date, category,
-    routeBankId, routeFromId, routeDebtId});
-  persist(); renderAll();
-  document.getElementById('desc').value='';
-  document.getElementById('amount').value='';
-  document.getElementById('txDate').value=new Date().toISOString().split('T')[0];
-  document.getElementById('routeBankSel').value='';
-  document.getElementById('routePayFromSel').value='';
-  document.getElementById('routeDebtSel').value='';
-  document.getElementById('debtPayoffNote').style.display='none';
-  showToast((currentType==='income'?'Income added':'Expense added')+toastExtra+'!');
-}
-function deleteTransaction(id){transactions=transactions.filter(t=>t.id!==id);persist();renderAll();}
-function clearAll(){if(!transactions.length)return;if(confirm('Clear all transactions?')){transactions=[];persist();renderAll();}}
+  function persist() {
+    localStorage.setItem(STORAGE_KEYS.tx, JSON.stringify(transactions));
+    localStorage.setItem(STORAGE_KEYS.bank, JSON.stringify(bankAccounts));
+    localStorage.setItem(STORAGE_KEYS.loans, JSON.stringify(loans));
+    localStorage.setItem(STORAGE_KEYS.goals, JSON.stringify(goals));
+  }
 
-// BANK
-function toggleForm(id){document.getElementById(id).classList.toggle('open');}
-function addBankAccount(){
-  const name=document.getElementById('bankName').value.trim();
-  const amount=parseFloat(document.getElementById('bankAmount').value);
-  if(!name){showToast('Enter account name',true);return;}
-  if(isNaN(amount)||amount<0){showToast('Enter valid balance',true);return;}
-  bankAccounts.push({id:Date.now(),name,amount});
-  document.getElementById('bankName').value='';document.getElementById('bankAmount').value='';
-  toggleForm('bankForm');persist();renderGoalsPage();refreshRoutingDropdowns();showToast('Account added!');
-}
-function deleteBankAccount(id){bankAccounts=bankAccounts.filter(a=>a.id!==id);persist();renderGoalsPage();refreshRoutingDropdowns();}
+  function esc(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
 
-// LOANS
-function addLoan(){
-  const name=document.getElementById('loanName').value.trim();
-  const total=parseFloat(document.getElementById('loanTotal').value);
-  const original=parseFloat(document.getElementById('loanOriginal').value)||total;
-  const rate=parseFloat(document.getElementById('loanRate').value)||0;
-  if(!name){showToast('Enter loan name',true);return;}
-  if(isNaN(total)||total<0){showToast('Enter valid amount',true);return;}
-  loans.push({id:Date.now(),name,total,original,rate});
-  document.getElementById('loanName').value='';document.getElementById('loanTotal').value='';
-  document.getElementById('loanOriginal').value='';document.getElementById('loanRate').value='';
-  toggleForm('loanForm');persist();renderGoalsPage();refreshRoutingDropdowns();showToast('Loan added!');
-}
-function deleteLoan(id){loans=loans.filter(l=>l.id!==id);persist();renderGoalsPage();refreshRoutingDropdowns();}
+  function fmt(n) {
+    const num = Number(n || 0);
+    return "$" + Math.abs(num).toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  }
 
-// GOALS
-function openGoalForm(){document.getElementById('goalFormOverlay').classList.add('open');}
-function closeGoalForm(){document.getElementById('goalFormOverlay').classList.remove('open');}
-function saveGoal(){
-  const name=document.getElementById('gfName').value.trim();
-  const type=document.getElementById('gfType').value;
-  const target=parseFloat(document.getElementById('gfTarget').value);
-  const current=parseFloat(document.getElementById('gfCurrent').value)||0;
-  const date=document.getElementById('gfDate').value;
-  const notes=document.getElementById('gfNotes').value.trim();
-  if(!name){showToast('Enter goal name',true);return;}
-  if(isNaN(target)||target<=0){showToast('Enter valid target',true);return;}
-  if(!date){showToast('Select a target date',true);return;}
-  goals.push({id:Date.now(),name,type,target,current,date,notes});
-  ['gfName','gfTarget','gfCurrent','gfNotes'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('gfDate').value=new Date().toISOString().split('T')[0];
-  closeGoalForm();persist();renderGoalsPage();showToast('Goal saved!');
-}
-function deleteGoal(id){goals=goals.filter(g=>g.id!==id);persist();renderGoalsPage();}
+  function fmtDate(d) {
+    if (!d) return "";
+    const dt = new Date(d + "T00:00:00");
+    if (isNaN(dt.getTime())) return "";
+    return dt.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  }
 
-// FORMAT HELPERS
-function fmt(n){return '$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
-function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function fmtDate(d){return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
+  function showToast(msg, isError = false) {
+    const t = $("toast");
+    t.textContent = msg;
+    t.className = "toast" + (isError ? " error" : "") + " show";
+    setTimeout(() => t.classList.remove("show"), 2200);
+  }
 
-// RENDER SUMMARY
-function renderSummary(){
-  const inc=transactions.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
-  const exp=transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
-  const bal=inc-exp;
-  document.getElementById('totalIncome').textContent=fmt(inc);
-  document.getElementById('totalExpense').textContent=fmt(exp);
-  const el=document.getElementById('totalBalance');
-  el.textContent=(bal<0?'-':'')+fmt(bal);
-  el.className='s-value balance '+(bal>=0?'pos':'neg');
-}
+  function showPage(name) {
+    document.querySelectorAll(".page").forEach((p) => p.classList.remove("active"));
+    document.querySelectorAll(".nav-tab").forEach((b) => b.classList.remove("active"));
+    $("page-" + name).classList.add("active");
+    $("tab-" + name).classList.add("active");
+    if (name === "goals") renderGoalsPage();
+  }
 
-// RENDER LIST
-function renderList(){
-  const el=document.getElementById('txList');
-  if(!transactions.length){el.innerHTML='<div class="empty-state">No transactions yet.<br>Add your first entry above.</div>';return;}
-  el.innerHTML=[...transactions].sort((a,b)=>new Date(b.date)-new Date(a.date)).map(t=>{
-    // Build routing badge
-    let routeTag = '';
-    if(t.type==='income' && t.routeBankId) {
-      const acc = bankAccounts.find(a=>a.id===t.routeBankId);
-      if(acc) routeTag = `<span style="font-family:'DM Mono',monospace;font-size:8px;color:var(--blue);background:rgba(132,182,222,0.14);border:1px solid rgba(132,182,222,0.30);padding:1px 5px;border-radius:999px;margin-left:4px;">↑ ${esc(acc.name)}</span>`;
+  function setType(t) {
+    currentType = t;
+    $("btnIncome").className = "type-btn" + (t === "income" ? " active-income" : "");
+    $("btnExpense").className = "type-btn" + (t === "expense" ? " active-expense" : "");
+
+    const addBtn = $("addBtn");
+    addBtn.textContent = t === "income" ? "+ Add Income" : "+ Add Expense";
+    addBtn.className = "add-btn" + (t === "expense" ? " expense-mode" : "");
+
+    $("routingIncome").style.display = t === "income" ? "block" : "none";
+    $("routingExpense").style.display = t === "expense" ? "block" : "none";
+
+    refreshRoutingDropdowns();
+  }
+
+  function toggleForm(id) {
+    const el = $(id);
+    if (el) el.classList.toggle("open");
+  }
+
+  function closeForm(id) {
+    const el = $(id);
+    if (el) el.classList.remove("open");
+  }
+
+  function refreshRoutingDropdowns() {
+    const bankSel = $("routeBankSel");
+    const cur1 = bankSel.value;
+    bankSel.innerHTML =
+      '<option value="">— Don\'t link to account —</option>' +
+      bankAccounts.map(a => `<option value="${a.id}">${esc(a.name)} (${fmt(a.amount)})</option>`).join("");
+    if ([...bankSel.options].some(opt => opt.value === cur1)) bankSel.value = cur1;
+
+    const fromSel = $("routePayFromSel");
+    const cur2 = fromSel.value;
+    fromSel.innerHTML =
+      '<option value="">— Don\'t link —</option>' +
+      bankAccounts.map(a => `<option value="${a.id}">${esc(a.name)} (${fmt(a.amount)})</option>`).join("");
+    if ([...fromSel.options].some(opt => opt.value === cur2)) fromSel.value = cur2;
+
+    const debtSel = $("routeDebtSel");
+    const cur3 = debtSel.value;
+    debtSel.innerHTML =
+      '<option value="">— Not a debt payment —</option>' +
+      loans.map(l => `<option value="${l.id}">${esc(l.name)} (owes ${fmt(l.total)})</option>`).join("");
+    if ([...debtSel.options].some(opt => opt.value === cur3)) debtSel.value = cur3;
+
+    updateDebtNote();
+  }
+
+  function updateDebtNote() {
+    const debtId = parseInt($("routeDebtSel").value, 10);
+    const amount = parseFloat($("amount").value) || 0;
+    const note = $("debtPayoffNote");
+
+    if (!debtId || !amount) {
+      note.style.display = "none";
+      return;
     }
-    if(t.type==='expense') {
-      if(t.routeDebtId) {
-        const loan = loans.find(l=>l.id===t.routeDebtId);
-        if(loan) routeTag += `<span style="font-family:'DM Mono',monospace;font-size:8px;color:var(--expense);background:rgba(226,125,114,0.10);border:1px solid rgba(226,125,114,0.20);padding:1px 5px;border-radius:999px;margin-left:4px;">↓ ${esc(loan.name)}</span>`;
+
+    const loan = loans.find(l => l.id === debtId);
+    if (!loan) {
+      note.style.display = "none";
+      return;
+    }
+
+    const after = Math.max(0, Number(loan.total || 0) - amount);
+    note.style.display = "block";
+    note.textContent = `Will reduce "${loan.name}" from ${fmt(loan.total)} → ${fmt(after)}`;
+  }
+
+  function addTransaction() {
+    const desc = $("desc").value.trim();
+    const amount = parseFloat($("amount").value);
+    const date = $("txDate").value;
+    const category = $("category").value || "General";
+
+    if (!desc) return showToast("Enter a description", true);
+    if (!amount || amount <= 0) return showToast("Enter a valid amount", true);
+    if (!date) return showToast("Select a date", true);
+
+    let routeBankId = null;
+    let routeDebtId = null;
+    let routeFromId = null;
+    let toastExtra = "";
+
+    if (currentType === "income") {
+      routeBankId = parseInt($("routeBankSel").value, 10) || null;
+      if (routeBankId) {
+        const acc = bankAccounts.find(a => a.id === routeBankId);
+        if (acc) {
+          acc.amount = round2(Number(acc.amount || 0) + amount);
+          toastExtra = ` → ${acc.name} +${fmt(amount)}`;
+        }
       }
-      if(t.routeFromId) {
-        const acc = bankAccounts.find(a=>a.id===t.routeFromId);
-        if(acc) routeTag += `<span style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);background:rgba(154,123,103,0.08);border:1px solid rgba(154,123,103,0.16);padding:1px 5px;border-radius:999px;margin-left:4px;">from ${esc(acc.name)}</span>`;
+    } else {
+      routeFromId = parseInt($("routePayFromSel").value, 10) || null;
+      routeDebtId = parseInt($("routeDebtSel").value, 10) || null;
+
+      if (routeFromId) {
+        const acc = bankAccounts.find(a => a.id === routeFromId);
+        if (acc) acc.amount = round2(Number(acc.amount || 0) - amount);
+      }
+
+      if (routeDebtId) {
+        const loan = loans.find(l => l.id === routeDebtId);
+        if (loan) {
+          loan.total = round2(Math.max(0, Number(loan.total || 0) - amount));
+          toastExtra = ` → ${loan.name} reduced`;
+        }
       }
     }
-    return `
-    <div class="tx-item">
-      <div class="tx-dot" style="background:${t.type==='income'?'var(--income)':'var(--expense)'}"></div>
-      <div class="tx-info">
-        <div class="tx-desc">${esc(t.desc)}${routeTag}</div>
-        <div class="tx-meta">${t.category} · ${fmtDate(t.date)}</div>
-      </div>
-      <div class="tx-amount" style="color:${t.type==='income'?'var(--income)':'var(--expense)'}">${t.type==='income'?'+':'-'}${fmt(t.amount)}</div>
-      <button class="tx-delete" onclick="deleteTransaction(${t.id})">×</button>
-    </div>`;
-  }).join('');
-}
 
-// RENDER GOALS PAGE
-function renderGoalsPage(){
-  renderNetWorth();renderBankList();renderLoanList();renderGoalsList();renderNwChart();
-}
+    transactions.push({
+      id: Date.now() + Math.floor(Math.random() * 1000),
+      type: currentType,
+      desc,
+      amount: round2(amount),
+      date,
+      category,
+      routeBankId,
+      routeFromId,
+      routeDebtId
+    });
 
-function renderNetWorth(){
-  const cash=bankAccounts.reduce((s,a)=>s+a.amount,0);
-  const debt=loans.reduce((s,l)=>s+l.total,0);
-  const txBal=transactions.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0)
-             -transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
-  const net=cash-debt+txBal;
-  const el=document.getElementById('netWorthValue');
-  el.textContent=(net<0?'-':'')+fmt(net);
-  el.className='nw-value '+(net>=0?'pos':'neg');
-  document.getElementById('nwCash').textContent='Cash '+fmt(cash);
-  document.getElementById('nwDebt').textContent='Debt '+fmt(debt);
-  document.getElementById('nwTxBal').textContent='Tx '+(txBal<0?'-':'')+fmt(txBal);
-  document.getElementById('totalCash').textContent=fmt(cash);
-  document.getElementById('totalDebt').textContent=fmt(debt);
-}
+    persist();
+    renderAll();
 
-function renderBankList(){
-  const el=document.getElementById('bankList');
-  if(!bankAccounts.length){el.innerHTML='<div class="no-items">No accounts added yet</div>';return;}
-  el.innerHTML=bankAccounts.map(a=>`
-    <div class="item-row">
-      <div><div class="item-name">${esc(a.name)}</div></div>
-      <div style="display:flex;align-items:center">
-        <div class="item-amount" style="color:var(--blue)">${fmt(a.amount)}</div>
-        <button class="item-del" onclick="deleteBankAccount(${a.id})">×</button>
-      </div>
-    </div>`).join('');
-}
+    $("desc").value = "";
+    $("amount").value = "";
+    $("txDate").value = new Date().toISOString().split("T")[0];
+    $("routeBankSel").value = "";
+    $("routePayFromSel").value = "";
+    $("routeDebtSel").value = "";
+    $("debtPayoffNote").style.display = "none";
 
-function renderLoanList(){
-  const el=document.getElementById('loanList');
-  if(!loans.length){el.innerHTML='<div class="no-items">No loans added yet</div>';return;}
-  el.innerHTML=loans.map(l=>{
-    const pct=l.original>0?Math.min(100,Math.round((1-l.total/l.original)*100)):0;
-    return `<div style="padding:9px 0;border-bottom:1px solid var(--border)">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <div class="item-name">${esc(l.name)}</div>
-          <div class="item-detail">${l.rate>0?l.rate+'% APR · ':''}${pct}% paid off</div>
+    showToast((currentType === "income" ? "Income added" : "Expense added") + toastExtra + "!");
+  }
+
+  function deleteTransaction(id) {
+    transactions = transactions.filter(t => t.id !== id);
+    persist();
+    renderAll();
+  }
+
+  function clearAll() {
+    if (!transactions.length) return;
+    if (confirm("Clear all transactions?")) {
+      transactions = [];
+      persist();
+      renderAll();
+    }
+  }
+
+  function addBankAccount() {
+    const name = $("bankName").value.trim();
+    const amount = parseFloat($("bankAmount").value);
+
+    if (!name) return showToast("Enter account name", true);
+    if (isNaN(amount) || amount < 0) return showToast("Enter valid balance", true);
+
+    bankAccounts.push({
+      id: Date.now() + Math.floor(Math.random() * 1000),
+      name,
+      amount: round2(amount)
+    });
+
+    $("bankName").value = "";
+    $("bankAmount").value = "";
+    closeForm("bankForm");
+
+    persist();
+    renderGoalsPage();
+    refreshRoutingDropdowns();
+    showToast("Account added!");
+  }
+
+  function deleteBankAccount(id) {
+    bankAccounts = bankAccounts.filter(a => a.id !== id);
+    persist();
+    renderGoalsPage();
+    refreshRoutingDropdowns();
+  }
+
+  function addLoan() {
+    const name = $("loanName").value.trim();
+    const total = parseFloat($("loanTotal").value);
+    const originalRaw = parseFloat($("loanOriginal").value);
+    const rate = parseFloat($("loanRate").value) || 0;
+
+    if (!name) return showToast("Enter loan name", true);
+    if (isNaN(total) || total < 0) return showToast("Enter valid amount", true);
+
+    const original = isNaN(originalRaw) ? total : originalRaw;
+
+    loans.push({
+      id: Date.now() + Math.floor(Math.random() * 1000),
+      name,
+      total: round2(total),
+      original: round2(original),
+      rate: round2(rate)
+    });
+
+    $("loanName").value = "";
+    $("loanTotal").value = "";
+    $("loanOriginal").value = "";
+    $("loanRate").value = "";
+    closeForm("loanForm");
+
+    persist();
+    renderGoalsPage();
+    refreshRoutingDropdowns();
+    showToast("Loan added!");
+  }
+
+  function deleteLoan(id) {
+    loans = loans.filter(l => l.id !== id);
+    persist();
+    renderGoalsPage();
+    refreshRoutingDropdowns();
+  }
+
+  function openGoalForm() {
+    $("goalFormOverlay").classList.add("open");
+  }
+
+  function closeGoalForm() {
+    $("goalFormOverlay").classList.remove("open");
+  }
+
+  function saveGoal() {
+    const name = $("gfName").value.trim();
+    const type = $("gfType").value;
+    const target = parseFloat($("gfTarget").value);
+    const current = parseFloat($("gfCurrent").value) || 0;
+    const date = $("gfDate").value;
+    const notes = $("gfNotes").value.trim();
+
+    if (!name) return showToast("Enter goal name", true);
+    if (isNaN(target) || target <= 0) return showToast("Enter valid target", true);
+    if (!date) return showToast("Select a target date", true);
+
+    goals.push({
+      id: Date.now() + Math.floor(Math.random() * 1000),
+      name,
+      type,
+      target: round2(target),
+      current: round2(current),
+      date,
+      notes
+    });
+
+    $("gfName").value = "";
+    $("gfTarget").value = "";
+    $("gfCurrent").value = "";
+    $("gfNotes").value = "";
+    $("gfDate").value = new Date().toISOString().split("T")[0];
+
+    closeGoalForm();
+    persist();
+    renderGoalsPage();
+    showToast("Goal saved!");
+  }
+
+  function deleteGoal(id) {
+    goals = goals.filter(g => g.id !== id);
+    persist();
+    renderGoalsPage();
+  }
+
+  function round2(n) {
+    return Math.round(Number(n || 0) * 100) / 100;
+  }
+
+  function renderSummary() {
+    const inc = transactions.filter(t => t.type === "income").reduce((s, t) => s + Number(t.amount || 0), 0);
+    const exp = transactions.filter(t => t.type === "expense").reduce((s, t) => s + Number(t.amount || 0), 0);
+    const bal = inc - exp;
+
+    $("totalIncome").textContent = fmt(inc);
+    $("totalExpense").textContent = fmt(exp);
+
+    const el = $("totalBalance");
+    el.textContent = (bal < 0 ? "-" : "") + fmt(bal);
+    el.className = "s-value balance " + (bal >= 0 ? "pos" : "neg");
+  }
+
+  function renderList() {
+    const el = $("txList");
+
+    if (!transactions.length) {
+      el.innerHTML = '<div class="empty-state">No transactions yet.<br>Add your first entry above.</div>';
+      return;
+    }
+
+    const sorted = [...transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    el.innerHTML = sorted.map(t => {
+      let routeTag = "";
+
+      if (t.type === "income" && t.routeBankId) {
+        const acc = bankAccounts.find(a => a.id === t.routeBankId);
+        if (acc) {
+          routeTag = `<span style="font-family:'DM Mono',monospace;font-size:8px;color:var(--blue);background:rgba(132,182,222,0.14);border:1px solid rgba(132,182,222,0.30);padding:1px 5px;border-radius:999px;margin-left:4px;">↑ ${esc(acc.name)}</span>`;
+        }
+      }
+
+      if (t.type === "expense") {
+        if (t.routeDebtId) {
+          const loan = loans.find(l => l.id === t.routeDebtId);
+          if (loan) {
+            routeTag += `<span style="font-family:'DM Mono',monospace;font-size:8px;color:var(--expense);background:rgba(226,125,114,0.10);border:1px solid rgba(226,125,114,0.20);padding:1px 5px;border-radius:999px;margin-left:4px;">↓ ${esc(loan.name)}</span>`;
+          }
+        }
+        if (t.routeFromId) {
+          const acc = bankAccounts.find(a => a.id === t.routeFromId);
+          if (acc) {
+            routeTag += `<span style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);background:rgba(154,123,103,0.08);border:1px solid rgba(154,123,103,0.16);padding:1px 5px;border-radius:999px;margin-left:4px;">from ${esc(acc.name)}</span>`;
+          }
+        }
+      }
+
+      return `
+        <div class="tx-item">
+          <div class="tx-dot" style="background:${t.type === "income" ? "var(--income)" : "var(--expense)"}"></div>
+          <div class="tx-info">
+            <div class="tx-desc">${esc(t.desc)}${routeTag}</div>
+            <div class="tx-meta">${esc(t.category || "General")} · ${fmtDate(t.date)}</div>
+          </div>
+          <div class="tx-amount" style="color:${t.type === "income" ? "var(--income)" : "var(--expense)"}">${t.type === "income" ? "+" : "-"}${fmt(t.amount)}</div>
+          <button class="tx-delete" type="button" data-del-tx="${t.id}">×</button>
         </div>
+      `;
+    }).join("");
+  }
+
+  function renderGoalsPage() {
+    renderNetWorth();
+    renderBankList();
+    renderLoanList();
+    renderGoalsList();
+    renderNwChart();
+  }
+
+  function renderNetWorth() {
+    const cash = bankAccounts.reduce((s, a) => s + Number(a.amount || 0), 0);
+    const debt = loans.reduce((s, l) => s + Number(l.total || 0), 0);
+    const txBal =
+      transactions.filter(t => t.type === "income").reduce((s, t) => s + Number(t.amount || 0), 0) -
+      transactions.filter(t => t.type === "expense").reduce((s, t) => s + Number(t.amount || 0), 0);
+
+    const net = cash - debt + txBal;
+    const el = $("netWorthValue");
+    el.textContent = (net < 0 ? "-" : "") + fmt(net);
+    el.className = "nw-value " + (net >= 0 ? "pos" : "neg");
+
+    $("nwCash").textContent = "Cash " + fmt(cash);
+    $("nwDebt").textContent = "Debt " + fmt(debt);
+    $("nwTxBal").textContent = "Tx " + (txBal < 0 ? "-" : "") + fmt(txBal);
+    $("totalCash").textContent = fmt(cash);
+    $("totalDebt").textContent = fmt(debt);
+  }
+
+  function renderBankList() {
+    const el = $("bankList");
+    if (!bankAccounts.length) {
+      el.innerHTML = '<div class="no-items">No accounts added yet</div>';
+      return;
+    }
+
+    el.innerHTML = bankAccounts.map(a => `
+      <div class="item-row">
+        <div><div class="item-name">${esc(a.name)}</div></div>
         <div style="display:flex;align-items:center">
-          <div class="item-amount" style="color:var(--expense)">${fmt(l.total)}</div>
-          <button class="item-del" onclick="deleteLoan(${l.id})">×</button>
+          <div class="item-amount" style="color:var(--blue)">${fmt(a.amount)}</div>
+          <button class="item-del" type="button" data-del-bank="${a.id}">×</button>
         </div>
       </div>
-      <div class="lp-bar-bg"><div class="lp-bar-fill" style="width:${pct}%"></div></div>
-    </div>`;
-  }).join('');
-}
-
-function renderGoalsList(){
-  const el=document.getElementById('goalsList');
-  if(!goals.length){
-    el.innerHTML=`<div style="text-align:center;padding:48px 20px;color:var(--muted);font-family:'DM Serif Display',serif;font-style:italic;font-size:16px;border:1px dashed var(--border);border-radius:18px;background:#fffdfb">No goals yet.<br><span style="font-size:12px;font-family:'DM Mono',monospace;letter-spacing:1px">Add your first goal to start tracking.</span></div>`;
-    return;
+    `).join("");
   }
-  const tc={savings:'var(--income)',debt:'var(--expense)',custom:'var(--gold)'};
-  el.innerHTML=goals.map(g=>{
-    const pct=Math.min(100,Math.round((g.current/g.target)*100));
-    const rem=g.target-g.current;
-    const targetDt=new Date(g.date+'T00:00:00');
-    const today=new Date();today.setHours(0,0,0,0);
-    const dLeft=Math.ceil((targetDt-today)/86400000);
-    const dStr=dLeft>0?dLeft+' days left':dLeft===0?'Due today!':Math.abs(dLeft)+' days overdue';
-    const dColor=dLeft<0?'var(--expense)':dLeft<=30?'var(--gold)':'var(--muted)';
-    return `<div class="goal-card ${g.type}">
-      <button class="goal-del" onclick="deleteGoal(${g.id})">×</button>
-      <div class="goal-top">
-        <div class="goal-name">${esc(g.name)}</div>
-        <div class="goal-type-badge badge-${g.type}">${g.type}</div>
-      </div>
-      ${g.notes?`<div class="goal-notes">${esc(g.notes)}</div>`:''}
-      <div class="goal-amounts">
-        <div class="goal-current" style="color:${tc[g.type]}">${fmt(g.current)}</div>
-        <div class="goal-target-info">of ${fmt(g.target)}<br>${fmt(rem)} remaining</div>
-      </div>
-      <div class="goal-bar-bg"><div class="goal-bar-fill" style="width:${pct}%;background:${tc[g.type]}"></div></div>
-      <div class="goal-meta">
-        <div class="goal-pct" style="color:${tc[g.type]}">${pct}% complete</div>
-        <div class="goal-right-meta">
-          <div class="goal-date">Target: ${fmtDate(g.date)}</div>
-          <div class="goal-days" style="color:${dColor}">${dStr}</div>
+
+  function renderLoanList() {
+    const el = $("loanList");
+    if (!loans.length) {
+      el.innerHTML = '<div class="no-items">No loans added yet</div>';
+      return;
+    }
+
+    el.innerHTML = loans.map(l => {
+      const original = Number(l.original || 0);
+      const total = Number(l.total || 0);
+      const pct = original > 0 ? Math.min(100, Math.round((1 - total / original) * 100)) : 0;
+
+      return `
+        <div style="padding:9px 0;border-bottom:1px solid var(--border)">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div class="item-name">${esc(l.name)}</div>
+              <div class="item-detail">${Number(l.rate || 0) > 0 ? esc(String(l.rate)) + '% APR · ' : ''}${pct}% paid off</div>
+            </div>
+            <div style="display:flex;align-items:center">
+              <div class="item-amount" style="color:var(--expense)">${fmt(total)}</div>
+              <button class="item-del" type="button" data-del-loan="${l.id}">×</button>
+            </div>
+          </div>
+          <div class="lp-bar-bg"><div class="lp-bar-fill" style="width:${pct}%"></div></div>
         </div>
-      </div>
-    </div>`;
-  }).join('');
-}
+      `;
+    }).join("");
+  }
 
-// ── CHARTS ──
-Chart.defaults.color='#9a7b67';
-Chart.defaults.font.family="'DM Mono', monospace";
-Chart.defaults.font.size=10;
+  function renderGoalsList() {
+    const el = $("goalsList");
 
-function renderCharts(){renderMainChart();renderDonut();renderBalance();renderCategoryList();}
+    if (!goals.length) {
+      el.innerHTML = `<div style="text-align:center;padding:48px 20px;color:var(--muted);font-family:'DM Serif Display',serif;font-style:italic;font-size:16px;border:1px dashed var(--border);border-radius:18px;background:#fffdfb">No goals yet.<br><span style="font-size:12px;font-family:'DM Mono',monospace;letter-spacing:1px">Add your first goal to start tracking.</span></div>`;
+      return;
+    }
 
-function getDateRange(){
-  if(!transactions.length)return[];
-  const dates=transactions.map(t=>t.date).sort();
-  const start=new Date(dates[0]+'T00:00:00'),end=new Date(dates[dates.length-1]+'T00:00:00');
-  const range=[];
-  for(let d=new Date(start);d<=end;d.setDate(d.getDate()+1))range.push(d.toISOString().split('T')[0]);
-  return range;
-}
+    const tc = { savings: "var(--income)", debt: "var(--expense)", custom: "var(--gold)" };
 
-function switchMainChart(type,btn){
-  mainChartType=type;
-  document.querySelectorAll('.chart-tabs .chart-tab').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');renderMainChart();
-}
+    el.innerHTML = goals.map(g => {
+      const target = Number(g.target || 0);
+      const current = Number(g.current || 0);
+      const pct = target > 0 ? Math.min(100, Math.round((current / target) * 100)) : 0;
+      const rem = target - current;
 
-function renderMainChart(){
-  const dates=getDateRange();
-  const labels=dates.map(d=>new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}));
-  const inc=dates.map(d=>transactions.filter(t=>t.type==='income'&&t.date===d).reduce((s,t)=>s+t.amount,0));
-  const exp=dates.map(d=>transactions.filter(t=>t.type==='expense'&&t.date===d).reduce((s,t)=>s+t.amount,0));
-  if(mainCI)mainCI.destroy();
-  mainCI=new Chart(document.getElementById('mainChart').getContext('2d'),{
-    type:mainChartType,
-    data:{labels:labels.length?labels:['No Data'],datasets:[
-      {label:'Income',data:inc.length?inc:[0],backgroundColor:'rgba(103,185,141,0.24)',borderColor:'#67b98d',borderWidth:2,borderRadius:mainChartType==='bar'?5:0,tension:0.4,fill:mainChartType==='line',pointBackgroundColor:'#67b98d',pointRadius:mainChartType==='line'?4:0},
-      {label:'Expenses',data:exp.length?exp:[0],backgroundColor:'rgba(226,125,114,0.22)',borderColor:'#e27d72',borderWidth:2,borderRadius:mainChartType==='bar'?5:0,tension:0.4,fill:mainChartType==='line',pointBackgroundColor:'#e27d72',pointRadius:mainChartType==='line'?4:0}
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:'top',labels:{boxWidth:10,padding:12,color:'#9a7b67'}},tooltip:{backgroundColor:'#fffaf7',titleColor:'#5d4637',bodyColor:'#5d4637',borderColor:'#efd8c7',borderWidth:1,callbacks:{label:c=>` ${c.dataset.label}: $${c.parsed.y.toLocaleString('en-US',{minimumFractionDigits:2})}`}}},
-      scales:{x:{grid:{color:'#f2e3d7'},ticks:{color:'#9a7b67'}},y:{grid:{color:'#f2e3d7'},ticks:{color:'#9a7b67',callback:v=>'$'+v.toLocaleString()}}}}
-  });
-}
+      const targetDt = new Date((g.date || "") + "T00:00:00");
+      const today = new Date();
+      today.setHours(0,0,0,0);
 
-function renderDonut(){
-  const inc=transactions.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
-  const exp=transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
-  if(donutCI)donutCI.destroy();
-  donutCI=new Chart(document.getElementById('donutChart').getContext('2d'),{
-    type:'doughnut',
-    data:{labels:['Income','Expenses'],datasets:[{data:[inc||0.01,exp||0.01],backgroundColor:['rgba(103,185,141,0.82)','rgba(226,125,114,0.82)'],borderColor:['#67b98d','#e27d72'],borderWidth:2,hoverOffset:6}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'68%',
-      plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:10,color:'#9a7b67'}},tooltip:{backgroundColor:'#fffaf7',titleColor:'#5d4637',bodyColor:'#5d4637',borderColor:'#efd8c7',borderWidth:1,callbacks:{label:c=>` ${c.label}: $${c.parsed.toLocaleString('en-US',{minimumFractionDigits:2})}`}}}}
-  });
-}
+      let dLeft = 0;
+      if (!isNaN(targetDt.getTime())) {
+        dLeft = Math.ceil((targetDt - today) / 86400000);
+      }
 
-function renderBalance(){
-  const dates=getDateRange();
-  const labels=dates.map(d=>new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}));
-  let r=0;
-  const bd=dates.map(d=>{
-    r+=transactions.filter(t=>t.type==='income'&&t.date===d).reduce((s,t)=>s+t.amount,0)
-      -transactions.filter(t=>t.type==='expense'&&t.date===d).reduce((s,t)=>s+t.amount,0);
-    return r;
-  });
-  if(balCI)balCI.destroy();
-  const ctx=document.getElementById('balanceChart').getContext('2d');
-  const g=ctx.createLinearGradient(0,0,0,190);g.addColorStop(0,'rgba(217,166,77,0.28)');g.addColorStop(1,'rgba(217,166,77,0)');
-  balCI=new Chart(ctx,{
-    type:'line',
-    data:{labels:labels.length?labels:['No Data'],datasets:[{label:'Balance',data:bd.length?bd:[0],backgroundColor:g,borderColor:'#d9a64d',borderWidth:2.5,fill:true,tension:0.4,pointBackgroundColor:'#d9a64d',pointRadius:4,pointHoverRadius:6}]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{backgroundColor:'#fffaf7',titleColor:'#5d4637',bodyColor:'#5d4637',borderColor:'#efd8c7',borderWidth:1,callbacks:{label:c=>` Balance: $${c.parsed.y.toLocaleString('en-US',{minimumFractionDigits:2})}`}}},
-      scales:{x:{grid:{color:'#f2e3d7'},ticks:{color:'#9a7b67'}},y:{grid:{color:'#f2e3d7'},ticks:{color:'#9a7b67',callback:v=>'$'+v.toLocaleString()}}}}
-  });
-}
+      const dStr = dLeft > 0 ? dLeft + " days left" : dLeft === 0 ? "Due today!" : Math.abs(dLeft) + " days overdue";
+      const dColor = dLeft < 0 ? "var(--expense)" : dLeft <= 30 ? "var(--gold)" : "var(--muted)";
 
-function renderCategoryList(){
-  const exp=transactions.filter(t=>t.type==='expense');
-  const total=exp.reduce((s,t)=>s+t.amount,0);
-  if(!total){document.getElementById('categoryList').innerHTML='<div style="color:var(--muted);font-size:12px;font-style:italic">No expense data yet</div>';return;}
-  const cats={};exp.forEach(t=>{cats[t.category]=(cats[t.category]||0)+t.amount;});
-  const sorted=Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,6);
-  const colors=['#e27d72','#d9a64d','#67b98d','#84b6de','#c89ce8','#f4a261'];
-  document.getElementById('categoryList').innerHTML=sorted.map(([cat,amt],i)=>{
-    const pct=Math.round((amt/total)*100);
-    return `<div class="cat-row"><div class="cat-name">${cat}</div><div class="cat-bar-bg"><div class="cat-bar-fill" style="width:${pct}%;background:${colors[i%colors.length]}"></div></div><div class="cat-pct">${pct}%</div></div>`;
-  }).join('');
-}
+      return `
+        <div class="goal-card ${esc(g.type || "custom")}">
+          <button class="goal-del" type="button" data-del-goal="${g.id}">×</button>
+          <div class="goal-top">
+            <div class="goal-name">${esc(g.name)}</div>
+            <div class="goal-type-badge badge-${esc(g.type || "custom")}">${esc(g.type || "custom")}</div>
+          </div>
+          ${g.notes ? `<div class="goal-notes">${esc(g.notes)}</div>` : ""}
+          <div class="goal-amounts">
+            <div class="goal-current" style="color:${tc[g.type] || "var(--gold)"}">${fmt(current)}</div>
+            <div class="goal-target-info">of ${fmt(target)}<br>${fmt(rem)} remaining</div>
+          </div>
+          <div class="goal-bar-bg"><div class="goal-bar-fill" style="width:${pct}%;background:${tc[g.type] || "var(--gold)"}"></div></div>
+          <div class="goal-meta">
+            <div class="goal-pct" style="color:${tc[g.type] || "var(--gold)"}">${pct}% complete</div>
+            <div class="goal-right-meta">
+              <div class="goal-date">Target: ${fmtDate(g.date)}</div>
+              <div class="goal-days" style="color:${dColor}">${dStr}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
 
-function renderNwChart(){
-  const cash=bankAccounts.reduce((s,a)=>s+a.amount,0);
-  const debt=loans.reduce((s,l)=>s+l.total,0);
-  const txBal=transactions.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0)
-             -transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
-  if(nwCI)nwCI.destroy();
-  nwCI=new Chart(document.getElementById('nwChart').getContext('2d'),{
-    type:'bar',
-    data:{
-      labels:['Cash in Bank','Tx Balance','Total Debt','Net Worth'],
-      datasets:[{data:[cash,txBal,-debt,cash+txBal-debt],
-        backgroundColor:['rgba(132,182,222,0.78)','rgba(103,185,141,0.78)','rgba(226,125,114,0.78)','rgba(217,166,77,0.85)'],
-        borderColor:['#84b6de','#67b98d','#e27d72','#d9a64d'],borderWidth:2,borderRadius:5}]
-    },
-    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
-      plugins:{legend:{display:false},tooltip:{backgroundColor:'#fffaf7',titleColor:'#5d4637',bodyColor:'#5d4637',borderColor:'#efd8c7',borderWidth:1,callbacks:{label:c=>` $${Math.abs(c.parsed.x).toLocaleString('en-US',{minimumFractionDigits:2})}`}}},
-      scales:{x:{grid:{color:'#f2e3d7'},ticks:{color:'#9a7b67',callback:v=>'$'+Math.abs(v).toLocaleString()}},y:{grid:{color:'transparent'},ticks:{color:'#9a7b67'}}}}
-  });
-}
+  function renderCharts() {
+    renderMainChart();
+    renderDonut();
+    renderBalance();
+    renderCategoryList();
+  }
 
-function showToast(msg,isError=false){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.className='toast'+(isError?' error':'')+' show';
-  setTimeout(()=>t.classList.remove('show'),2200);
-}
+  function getDateRange() {
+    if (!transactions.length) return [];
+    const dates = transactions
+      .map(t => t.date)
+      .filter(Boolean)
+      .sort();
+
+    if (!dates.length) return [];
+
+    const start = new Date(dates[0] + "T00:00:00");
+    const end = new Date(dates[dates.length - 1] + "T00:00:00");
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) return [];
+
+    const range = [];
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+      range.push(d.toISOString().split("T")[0]);
+    }
+    return range;
+  }
+
+  function switchMainChart(type) {
+    mainChartType = type;
+    $("mainBarBtn").classList.toggle("active", type === "bar");
+    $("mainLineBtn").classList.toggle("active", type === "line");
+    renderMainChart();
+  }
+
+  if (window.Chart) {
+    Chart.defaults.color = "#9a7b67";
+    Chart.defaults.font.family = "'DM Mono', monospace";
+    Chart.defaults.font.size = 10;
+  }
+
+  function renderMainChart() {
+    if (!window.Chart) return;
+
+    const dates = getDateRange();
+    const labels = dates.map(d => new Date(d + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" }));
+    const inc = dates.map(d => transactions.filter(t => t.type === "income" && t.date === d).reduce((s, t) => s + Number(t.amount || 0), 0));
+    const exp = dates.map(d => transactions.filter(t => t.type === "expense" && t.date === d).reduce((s, t) => s + Number(t.amount || 0), 0));
+
+    if (mainCI) mainCI.destroy();
+
+    mainCI = new Chart($("mainChart").getContext("2d"), {
+      type: mainChartType,
+      data: {
+        labels: labels.length ? labels : ["No Data"],
+        datasets: [
+          {
+            label: "Income",
+            data: inc.length ? inc : [0],
+            backgroundColor: "rgba(103,185,141,0.24)",
+            borderColor: "#67b98d",
+            borderWidth: 2,
+            borderRadius: mainChartType === "bar" ? 5 : 0,
+            tension: 0.4,
+            fill: mainChartType === "line",
+            pointBackgroundColor: "#67b98d",
+            pointRadius: mainChartType === "line" ? 4 : 0
+          },
+          {
+            label: "Expenses",
+            data: exp.length ? exp : [0],
+            backgroundColor: "rgba(226,125,114,0.22)",
+            borderColor: "#e27d72",
+            borderWidth: 2,
+            borderRadius: mainChartType === "bar" ? 5 : 0,
+            tension: 0.4,
+            fill: mainChartType === "line",
+            pointBackgroundColor: "#e27d72",
+            pointRadius: mainChartType === "line" ? 4 : 0
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: "top",
+            labels: { boxWidth: 10, padding: 12, color: "#9a7b67" }
+          },
+          tooltip: {
+            backgroundColor: "#fffaf7",
+            titleColor: "#5d4637",
+            bodyColor: "#5d4637",
+            borderColor: "#efd8c7",
+            borderWidth: 1,
+            callbacks: {
+              label: (c) => ` ${c.dataset.label}: $${Number(c.parsed.y || 0).toLocaleString("en-US", { minimumFractionDigits: 2 })}`
+            }
+          }
+        },
+        scales: {
+          x: { grid: { color: "#f2e3d7" }, ticks: { color: "#9a7b67" } },
+          y: {
+            grid: { color: "#f2e3d7" },
+            ticks: {
+              color: "#9a7b67",
+              callback: (v) => "$" + Number(v).toLocaleString()
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function renderDonut() {
+    if (!window.Chart) return;
+
+    const inc = transactions.filter(t => t.type === "income").reduce((s, t) => s + Number(t.amount || 0), 0);
+    const exp = transactions.filter(t => t.type === "expense").reduce((s, t) => s + Number(t.amount || 0), 0);
+
+    if (donutCI) donutCI.destroy();
+
+    donutCI = new Chart($("donutChart").getContext("2d"), {
+      type: "doughnut",
+      data: {
+        labels: ["Income", "Expenses"],
+        datasets: [{
+          data: [inc || 0.01, exp || 0.01],
+          backgroundColor: ["rgba(103,185,141,0.82)", "rgba(226,125,114,0.82)"],
+          borderColor: ["#67b98d", "#e27d72"],
+          borderWidth: 2,
+          hoverOffset: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: "68%",
+        plugins: {
+          legend: {
+            position: "bottom",
+            labels: { boxWidth: 10, padding: 10, color: "#9a7b67" }
+          },
+          tooltip: {
+            backgroundColor: "#fffaf7",
+            titleColor: "#5d4637",
+            bodyColor: "#5d4637",
+            borderColor: "#efd8c7",
+            borderWidth: 1,
+            callbacks: {
+              label: (c) => ` ${c.label}: $${Number(c.parsed || 0).toLocaleString("en-US", { minimumFractionDigits: 2 })}`
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function renderBalance() {
+    if (!window.Chart) return;
+
+    const dates = getDateRange();
+    const labels = dates.map(d => new Date(d + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" }));
+
+    let running = 0;
+    const bd = dates.map(d => {
+      running +=
+        transactions.filter(t => t.type === "income" && t.date === d).reduce((s, t) => s + Number(t.amount || 0), 0) -
+        transactions.filter(t => t.type === "expense" && t.date === d).reduce((s, t) => s + Number(t.amount || 0), 0);
+      return running;
+    });
+
+    if (balCI) balCI.destroy();
+
+    const ctx = $("balanceChart").getContext("2d");
+    const g = ctx.createLinearGradient(0, 0, 0, 190);
+    g.addColorStop(0, "rgba(217,166,77,0.28)");
+    g.addColorStop(1, "rgba(217,166,77,0)");
+
+    balCI = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: labels.length ? labels : ["No Data"],
+        datasets: [{
+          label: "Balance",
+          data: bd.length ? bd : [0],
+          backgroundColor: g,
+          borderColor: "#d9a64d",
+          borderWidth: 2.5,
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: "#d9a64d",
+          pointRadius: 4,
+          pointHoverRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: "#fffaf7",
+            titleColor: "#5d4637",
+            bodyColor: "#5d4637",
+            borderColor: "#efd8c7",
+            borderWidth: 1,
+            callbacks: {
+              label: (c) => ` Balance: $${Number(c.parsed.y || 0).toLocaleString("en-US", { minimumFractionDigits: 2 })}`
+            }
+          }
+        },
+        scales: {
+          x: { grid: { color: "#f2e3d7" }, ticks: { color: "#9a7b67" } },
+          y: {
+            grid: { color: "#f2e3d7" },
+            ticks: {
+              color: "#9a7b67",
+              callback: (v) => "$" + Number(v).toLocaleString()
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function renderCategoryList() {
+    const exp = transactions.filter(t => t.type === "expense");
+    const total = exp.reduce((s, t) => s + Number(t.amount || 0), 0);
+
+    if (!total) {
+      $("categoryList").innerHTML = '<div style="color:var(--muted);font-size:12px;font-style:italic">No expense data yet</div>';
+      return;
+    }
+
+    const cats = {};
+    exp.forEach(t => {
+      const key = t.category || "General";
+      cats[key] = (cats[key] || 0) + Number(t.amount || 0);
+    });
+
+    const sorted = Object.entries(cats).sort((a, b) => b[1] - a[1]).slice(0, 6);
+    const colors = ["#e27d72", "#d9a64d", "#67b98d", "#84b6de", "#c89ce8", "#f4a261"];
+
+    $("categoryList").innerHTML = sorted.map(([cat, amt], i) => {
+      const pct = Math.round((amt / total) * 100);
+      return `<div class="cat-row"><div class="cat-name">${esc(cat)}</div><div class="cat-bar-bg"><div class="cat-bar-fill" style="width:${pct}%;background:${colors[i % colors.length]}"></div></div><div class="cat-pct">${pct}%</div></div>`;
+    }).join("");
+  }
+
+  function renderNwChart() {
+    if (!window.Chart) return;
+
+    const cash = bankAccounts.reduce((s, a) => s + Number(a.amount || 0), 0);
+    const debt = loans.reduce((s, l) => s + Number(l.total || 0), 0);
+    const txBal =
+      transactions.filter(t => t.type === "income").reduce((s, t) => s + Number(t.amount || 0), 0) -
+      transactions.filter(t => t.type === "expense").reduce((s, t) => s + Number(t.amount || 0), 0);
+
+    if (nwCI) nwCI.destroy();
+
+    nwCI = new Chart($("nwChart").getContext("2d"), {
+      type: "bar",
+      data: {
+        labels: ["Cash in Bank", "Tx Balance", "Total Debt", "Net Worth"],
+        datasets: [{
+          data: [cash, txBal, -debt, cash + txBal - debt],
+          backgroundColor: [
+            "rgba(132,182,222,0.78)",
+            "rgba(103,185,141,0.78)",
+            "rgba(226,125,114,0.78)",
+            "rgba(217,166,77,0.85)"
+          ],
+          borderColor: ["#84b6de", "#67b98d", "#e27d72", "#d9a64d"],
+          borderWidth: 2,
+          borderRadius: 5
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: "y",
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: "#fffaf7",
+            titleColor: "#5d4637",
+            bodyColor: "#5d4637",
+            borderColor: "#efd8c7",
+            borderWidth: 1,
+            callbacks: {
+              label: (c) => ` $${Math.abs(Number(c.parsed.x || 0)).toLocaleString("en-US", { minimumFractionDigits: 2 })}`
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: "#f2e3d7" },
+            ticks: {
+              color: "#9a7b67",
+              callback: (v) => "$" + Math.abs(Number(v)).toLocaleString()
+            }
+          },
+          y: {
+            grid: { color: "transparent" },
+            ticks: { color: "#9a7b67" }
+          }
+        }
+      }
+    });
+  }
+
+  function renderAll() {
+    renderSummary();
+    renderList();
+    renderCharts();
+    renderGoalsPage();
+    refreshRoutingDropdowns();
+  }
+
+  function bindEvents() {
+    $("tab-tracker").addEventListener("click", () => showPage("tracker"));
+    $("tab-goals").addEventListener("click", () => showPage("goals"));
+
+    $("btnIncome").addEventListener("click", () => setType("income"));
+    $("btnExpense").addEventListener("click", () => setType("expense"));
+    $("addBtn").addEventListener("click", addTransaction);
+    $("clearBtn").addEventListener("click", clearAll);
+
+    $("mainBarBtn").addEventListener("click", () => switchMainChart("bar"));
+    $("mainLineBtn").addEventListener("click", () => switchMainChart("line"));
+
+    $("openBankFormBtn").addEventListener("click", () => toggleForm("bankForm"));
+    $("cancelBankBtn").addEventListener("click", () => closeForm("bankForm"));
+    $("saveBankBtn").addEventListener("click", addBankAccount);
+
+    $("openLoanFormBtn").addEventListener("click", () => toggleForm("loanForm"));
+    $("cancelLoanBtn").addEventListener("click", () => closeForm("loanForm"));
+    $("saveLoanBtn").addEventListener("click", addLoan);
+
+    $("openGoalFormBtn").addEventListener("click", openGoalForm);
+    $("closeGoalFormBtn").addEventListener("click", closeGoalForm);
+    $("saveGoalBtn").addEventListener("click", saveGoal);
+
+    $("amount").addEventListener("input", updateDebtNote);
+    $("routeDebtSel").addEventListener("change", updateDebtNote);
+
+    document.addEventListener("click", (e) => {
+      const txId = e.target.getAttribute("data-del-tx");
+      const bankId = e.target.getAttribute("data-del-bank");
+      const loanId = e.target.getAttribute("data-del-loan");
+      const goalId = e.target.getAttribute("data-del-goal");
+
+      if (txId) deleteTransaction(Number(txId));
+      if (bankId) deleteBankAccount(Number(bankId));
+      if (loanId) deleteLoan(Number(loanId));
+      if (goalId) deleteGoal(Number(goalId));
+    });
+
+    $("goalFormOverlay").addEventListener("click", (e) => {
+      if (e.target === $("goalFormOverlay")) closeGoalForm();
+    });
+  }
+
+  function init() {
+    $("headerDate").textContent = new Date().toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    });
+
+    const today = new Date().toISOString().split("T")[0];
+    $("txDate").value = today;
+    $("gfDate").value = today;
+
+    bindEvents();
+    setType("income");
+    renderAll();
+  }
+
+  init();
+})();
 </script>
 </body>
 </html>

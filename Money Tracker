@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marty Money Tracker</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #fff7f0;
+  color: #5b4636;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+h1 { margin-top:0 }
+
+.marty {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.marty img {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  object-fit: cover;
+}
+
+.mood {
+  font-size: 24px;
+}
+
+button {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: #f4a261;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+.transaction {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.income { color: green; }
+.expense { color: red; }
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="card">
+    <h1>🐱 Marty Money Tracker</h1>
+
+    <div class="marty">
+      <img src="marty.jpg">
+      <div>
+        <div class="mood" id="mood">😺</div>
+        <div id="message">Marty is watching your budget 👀</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Add Transaction</h3>
+
+    <select id="type">
+      <option value="income">Income</option>
+      <option value="expense">Expense</option>
+    </select>
+
+    <input id="desc" placeholder="Description">
+    <input id="amount" type="number" placeholder="Amount">
+
+    <button onclick="add()">Add</button>
+  </div>
+
+  <div class="card">
+    <h3>Summary</h3>
+    <div>Income: <span id="income">$0</span></div>
+    <div>Expense: <span id="expense">$0</span></div>
+    <div>Balance: <span id="balance">$0</span></div>
+  </div>
+
+  <div class="card">
+    <h3>Transactions</h3>
+    <div id="list"></div>
+  </div>
+
+</div>
+
+<script>
+let data = JSON.parse(localStorage.getItem("data")) || [];
+
+function save() {
+  localStorage.setItem("data", JSON.stringify(data));
+}
+
+function add() {
+  let type = document.getElementById("type").value;
+  let desc = document.getElementById("desc").value;
+  let amount = Number(document.getElementById("amount").value);
+
+  if (!desc || !amount) return;
+
+  data.push({type, desc, amount});
+  save();
+  render();
+}
+
+function render() {
+  let income = 0;
+  let expense = 0;
+
+  data.forEach(t => {
+    if (t.type === "income") income += t.amount;
+    else expense += t.amount;
+  });
+
+  document.getElementById("income").innerText = "$" + income;
+  document.getElementById("expense").innerText = "$" + expense;
+  document.getElementById("balance").innerText = "$" + (income - expense);
+
+  let list = document.getElementById("list");
+  list.innerHTML = "";
+
+  data.forEach(t => {
+    let div = document.createElement("div");
+    div.className = "transaction";
+    div.innerHTML = `
+      <span>${t.desc}</span>
+      <span class="${t.type}">
+        ${t.type === "income" ? "+" : "-"}$${t.amount}
+      </span>
+    `;
+    list.appendChild(div);
+  });
+
+  updateMarty(income, expense);
+}
+
+function updateMarty(income, expense) {
+  let mood = document.getElementById("mood");
+  let msg = document.getElementById("message");
+
+  if (data.length === 0) {
+    mood.innerText = "😴";
+    msg.innerText = "No spending yet...";
+  } else if (income > expense) {
+    mood.innerText = "😸";
+    msg.innerText = "Good job saving!";
+  } else if (expense > income) {
+    mood.innerText = "🙀";
+    msg.innerText = "Too much spending!";
+  } else {
+    mood.innerText = "🧐";
+    msg.innerText = "Perfect balance...";
+  }
+}
+
+render();
+</script>
+
+</body>
+</html>

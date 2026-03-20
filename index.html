@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Ledger — Marty Finance Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -178,7 +178,7 @@
     font-family:'DM Sans',sans-serif;
     font-size:13px;
     outline:none;
-    transition:border-color 0.15s, box-shadow 0.15s;
+    transition:border-color 0.15s, box-shadow 0.15s, opacity 0.15s;
     -webkit-appearance:none;
     appearance:none;
     border-radius:12px;
@@ -189,6 +189,12 @@
     box-shadow:0 0 0 4px rgba(244,162,97,0.10);
   }
 
+  input:disabled, select:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    background: #f9f1ea;
+  }
+
   input[type="date"]::-webkit-calendar-picker-indicator {
     filter:sepia(0.6) saturate(0.8);
     cursor:pointer;
@@ -197,6 +203,7 @@
   select option { background:var(--surface); }
 
   .form-row { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+  .form-row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:9px; }
 
   .add-btn {
     width:100%;
@@ -251,7 +258,7 @@
   }
   .clear-btn:hover { color:var(--expense); border-color:var(--expense); }
 
-  .tx-list { flex:1; overflow-y:auto; max-height:300px; }
+  .tx-list { flex:1; overflow-y:auto; max-height:320px; }
   .tx-list::-webkit-scrollbar { width:5px; }
   .tx-list::-webkit-scrollbar-thumb { background:#e6cdbc; border-radius:99px; }
 
@@ -380,7 +387,14 @@
     box-shadow: var(--shadow);
   }
 
-  .chart-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+  .chart-header {
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:12px;
+    margin-bottom:14px;
+  }
+
   .chart-title { font-family:'DM Serif Display',serif; font-size:16px; font-style:italic; }
   .chart-subtitle {
     font-family:'DM Mono',monospace;
@@ -410,7 +424,12 @@
 
   .chart-wrap { position:relative; height:190px; }
   .charts-bottom { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
-  .chart-wrap-sm { position:relative; height:155px; }
+  .chart-wrap-sm { position:relative; height:185px; }
+
+  .filter-inline {
+    min-width: 150px;
+    max-width: 180px;
+  }
 
   .category-list { margin-top:8px; display:flex; flex-direction:column; gap:7px; }
   .cat-row { display:flex; align-items:center; gap:9px; }
@@ -694,13 +713,39 @@
     justify-content:space-between;
     align-items:flex-start;
     margin-bottom:10px;
+    gap: 8px;
   }
 
   .goal-name {
     font-family:'DM Serif Display',serif;
     font-size:15px;
     font-style:italic;
-    padding-right:24px;
+    padding-right:12px;
+  }
+
+  .goal-actions {
+    display:flex;
+    gap:6px;
+    align-items:center;
+    flex-shrink:0;
+  }
+
+  .goal-edit {
+    background:#fffaf7;
+    border:1px solid var(--border);
+    color:var(--muted);
+    border-radius:999px;
+    padding:4px 9px;
+    font-family:'DM Mono', monospace;
+    font-size:8px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    cursor:pointer;
+  }
+
+  .goal-edit:hover {
+    color: var(--peach);
+    border-color: var(--peach);
   }
 
   .goal-type-badge {
@@ -716,6 +761,15 @@
   .badge-savings { border-color:var(--income); color:var(--income); }
   .badge-debt { border-color:var(--expense); color:var(--expense); }
   .badge-custom { border-color:var(--gold); color:var(--gold); }
+
+  .goal-linked {
+    font-family:'DM Mono', monospace;
+    font-size:8px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:8px;
+  }
 
   .goal-amounts {
     display:flex;
@@ -766,15 +820,13 @@
   }
 
   .goal-del {
-    position:absolute;
-    top:12px;
-    right:12px;
     background:none;
     border:none;
     color:#c8b09f;
     cursor:pointer;
     font-size:14px;
     transition:color 0.15s;
+    line-height:1;
   }
   .goal-del:hover { color:var(--expense); }
 
@@ -802,7 +854,7 @@
     background:var(--surface);
     border:1px solid var(--border);
     padding:26px;
-    width:420px;
+    width:560px;
     max-width:92vw;
     border-radius:22px;
     box-shadow:0 18px 40px rgba(120,80,50,0.20);
@@ -844,6 +896,15 @@
     font-size:11px;
     cursor:pointer;
     border-radius:12px;
+  }
+
+  .gf-note {
+    margin-top: 4px;
+    font-family:'DM Mono', monospace;
+    font-size:8px;
+    color:var(--muted);
+    letter-spacing:0.6px;
+    line-height:1.5;
   }
 
   .nw-chart-wrap { position:relative; height:170px; }
@@ -901,6 +962,10 @@
     .charts-bottom { grid-template-columns:1fr; }
     .marty-hero { grid-template-columns:78px 1fr; }
     .marty-photo { width:78px; height:78px; border-radius:18px; }
+    .form-row-3 { grid-template-columns:1fr; }
+    .goal-form-box { width: 92vw; }
+    .chart-header { flex-direction: column; }
+    .filter-inline { max-width: 100%; width: 100%; }
   }
 </style>
 </head>
@@ -1012,7 +1077,7 @@
     <div class="right-panel">
       <div class="marty-hero">
         <div class="marty-photo">
-          <img src="marty.jpg" alt="Marty">
+          <img src="marty.jpg" alt="Marty" />
         </div>
         <div>
           <div class="marty-title">Marty’s Ledger</div>
@@ -1070,6 +1135,36 @@
           </div>
         </div>
         <div class="chart-wrap"><canvas id="balanceChart"></canvas></div>
+      </div>
+
+      <div class="charts-bottom">
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <div class="chart-title">Monthly Breakdown</div>
+              <div class="chart-subtitle">Income · Expenses · Net by Month</div>
+            </div>
+            <div class="filter-inline">
+              <label class="field-label" for="monthFilter">Month Filter</label>
+              <select id="monthFilter">
+                <option value="all">All Months</option>
+              </select>
+            </div>
+          </div>
+          <div class="chart-wrap-sm"><canvas id="monthlyChart"></canvas></div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <div class="chart-title">Category Stats</div>
+              <div class="chart-subtitle">Filtered Transactions by Category</div>
+            </div>
+          </div>
+          <div id="categoryStatsList" class="category-list">
+            <div style="color:var(--muted);font-size:12px;font-style:italic">No category data yet</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1176,7 +1271,7 @@
     <div class="goals-right">
       <div class="goals-hero">
         <div class="goals-hero-photo">
-          <img src="marty.jpg" alt="Marty">
+          <img src="marty.jpg" alt="Marty" />
         </div>
         <div>
           <div class="goals-hero-title">Goals with Marty</div>
@@ -1203,14 +1298,14 @@
 
 <div class="goal-form-overlay" id="goalFormOverlay">
   <div class="goal-form-box">
-    <div class="gf-title">New Financial Goal</div>
+    <div class="gf-title" id="goalModalTitle">New Financial Goal</div>
 
     <div class="gf-full field-group">
       <label class="field-label" for="gfName">Goal Name</label>
       <input type="text" id="gfName" placeholder="e.g. Pay off car loan, Emergency fund…" />
     </div>
 
-    <div class="gf-row">
+    <div class="form-row-3">
       <div class="field-group">
         <label class="field-label" for="gfType">Goal Type</label>
         <select id="gfType">
@@ -1219,9 +1314,21 @@
           <option value="custom">Custom</option>
         </select>
       </div>
+
       <div class="field-group">
         <label class="field-label" for="gfTarget">Target Amount ($)</label>
         <input type="number" id="gfTarget" placeholder="0.00" min="0" step="0.01" />
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="gfLinkedType">Progress Source</label>
+        <select id="gfLinkedType">
+          <option value="manual">Manual</option>
+          <option value="cash">Cash in Bank</option>
+          <option value="debt">Total Debt</option>
+          <option value="txbalance">Transaction Balance</option>
+          <option value="networth">Net Worth Snapshot</option>
+        </select>
       </div>
     </div>
 
@@ -1229,6 +1336,7 @@
       <div class="field-group">
         <label class="field-label" for="gfCurrent">Current Progress ($)</label>
         <input type="number" id="gfCurrent" placeholder="0.00" min="0" step="0.01" />
+        <div class="gf-note" id="gfCurrentNote">Used when Progress Source is Manual.</div>
       </div>
       <div class="field-group">
         <label class="field-label" for="gfDate">Target Date</label>
@@ -1271,6 +1379,8 @@
   let donutCI = null;
   let balCI = null;
   let nwCI = null;
+  let monthlyCI = null;
+  let editingGoalId = null;
 
   const $ = (id) => document.getElementById(id);
 
@@ -1314,6 +1424,10 @@
     return dt.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
   }
 
+  function round2(n) {
+    return Math.round(Number(n || 0) * 100) / 100;
+  }
+
   function showToast(msg, isError = false) {
     const t = $("toast");
     t.textContent = msg;
@@ -1327,6 +1441,81 @@
     $("page-" + name).classList.add("active");
     $("tab-" + name).classList.add("active");
     if (name === "goals") renderGoalsPage();
+  }
+
+  function getSnapshotValues() {
+    const cash = bankAccounts.reduce((s, a) => s + Number(a.amount || 0), 0);
+    const debt = loans.reduce((s, l) => s + Number(l.total || 0), 0);
+    const txBal =
+      transactions.filter(t => t.type === "income").reduce((s, t) => s + Number(t.amount || 0), 0) -
+      transactions.filter(t => t.type === "expense").reduce((s, t) => s + Number(t.amount || 0), 0);
+    const networth = cash - debt + txBal;
+    return { cash, debt, txBal, networth };
+  }
+
+  function getGoalComputedCurrent(goal) {
+    if (!goal) return 0;
+    const { cash, debt, txBal, networth } = getSnapshotValues();
+    const linkedType = goal.linkedType || "manual";
+
+    if (linkedType === "manual") return Number(goal.current || 0);
+    if (linkedType === "cash") return cash;
+    if (linkedType === "txbalance") return txBal;
+    if (linkedType === "networth") return networth;
+    if (linkedType === "debt") return Math.max(0, Number(goal.target || 0) - debt);
+
+    return Number(goal.current || 0);
+  }
+
+  function getLinkedTypeLabel(linkedType) {
+    const map = {
+      manual: "Manual",
+      cash: "Auto · Cash in Bank",
+      debt: "Auto · Total Debt",
+      txbalance: "Auto · Transaction Balance",
+      networth: "Auto · Net Worth Snapshot"
+    };
+    return map[linkedType] || "Manual";
+  }
+
+  function getAvailableMonths() {
+    const months = [...new Set(transactions.map(t => (t.date || "").slice(0, 7)).filter(Boolean))];
+    return months.sort((a, b) => a.localeCompare(b));
+  }
+
+  function getSelectedMonth() {
+    return $("monthFilter") ? $("monthFilter").value : "all";
+  }
+
+  function getFilteredTransactions() {
+    const selectedMonth = getSelectedMonth();
+    if (selectedMonth === "all") return [...transactions];
+    return transactions.filter(t => (t.date || "").slice(0, 7) === selectedMonth);
+  }
+
+  function refreshMonthFilter() {
+    const monthFilter = $("monthFilter");
+    if (!monthFilter) return;
+
+    const current = monthFilter.value || "all";
+    const months = getAvailableMonths();
+
+    monthFilter.innerHTML =
+      '<option value="all">All Months</option>' +
+      months.map(m => {
+        const [y, mo] = m.split("-");
+        const label = new Date(Number(y), Number(mo) - 1, 1).toLocaleDateString("en-US", {
+          month: "long",
+          year: "numeric"
+        });
+        return `<option value="${m}">${label}</option>`;
+      }).join("");
+
+    if ([...monthFilter.options].some(opt => opt.value === current)) {
+      monthFilter.value = current;
+    } else {
+      monthFilter.value = "all";
+    }
   }
 
   function setType(t) {
@@ -1559,6 +1748,34 @@
     $("goalFormOverlay").classList.remove("open");
   }
 
+  function resetGoalForm() {
+    editingGoalId = null;
+    $("gfName").value = "";
+    $("gfType").value = "savings";
+    $("gfTarget").value = "";
+    $("gfCurrent").value = "";
+    $("gfNotes").value = "";
+    $("gfLinkedType").value = "manual";
+    $("gfDate").value = new Date().toISOString().split("T")[0];
+    $("saveGoalBtn").textContent = "Save Goal";
+    $("goalModalTitle").textContent = "New Financial Goal";
+    updateGoalCurrentInputState();
+  }
+
+  function updateGoalCurrentInputState() {
+    const linkedType = $("gfLinkedType").value;
+    const currentInput = $("gfCurrent");
+    const note = $("gfCurrentNote");
+
+    currentInput.disabled = linkedType !== "manual";
+
+    if (linkedType === "manual") {
+      note.textContent = "Used when Progress Source is Manual.";
+    } else {
+      note.textContent = "Current Progress is calculated automatically from the selected Progress Source.";
+    }
+  }
+
   function saveGoal() {
     const name = $("gfName").value.trim();
     const type = $("gfType").value;
@@ -1566,41 +1783,61 @@
     const current = parseFloat($("gfCurrent").value) || 0;
     const date = $("gfDate").value;
     const notes = $("gfNotes").value.trim();
+    const linkedType = $("gfLinkedType").value || "manual";
 
     if (!name) return showToast("Enter goal name", true);
     if (isNaN(target) || target <= 0) return showToast("Enter valid target", true);
     if (!date) return showToast("Select a target date", true);
 
-    goals.push({
-      id: Date.now() + Math.floor(Math.random() * 1000),
+    const goalPayload = {
       name,
       type,
       target: round2(target),
       current: round2(current),
       date,
-      notes
-    });
+      notes,
+      linkedType
+    };
 
-    $("gfName").value = "";
-    $("gfTarget").value = "";
-    $("gfCurrent").value = "";
-    $("gfNotes").value = "";
-    $("gfDate").value = new Date().toISOString().split("T")[0];
+    if (editingGoalId !== null) {
+      goals = goals.map(g => g.id === editingGoalId ? { ...g, ...goalPayload } : g);
+      showToast("Goal updated!");
+    } else {
+      goals.push({
+        id: Date.now() + Math.floor(Math.random() * 1000),
+        ...goalPayload
+      });
+      showToast("Goal saved!");
+    }
 
-    closeGoalForm();
     persist();
     renderGoalsPage();
-    showToast("Goal saved!");
+    resetGoalForm();
+    closeGoalForm();
+  }
+
+  function editGoal(id) {
+    const goal = goals.find(g => g.id === id);
+    if (!goal) return;
+
+    editingGoalId = id;
+    $("gfName").value = goal.name || "";
+    $("gfType").value = goal.type || "savings";
+    $("gfTarget").value = goal.target ?? "";
+    $("gfCurrent").value = goal.current ?? "";
+    $("gfNotes").value = goal.notes || "";
+    $("gfLinkedType").value = goal.linkedType || "manual";
+    $("gfDate").value = goal.date || new Date().toISOString().split("T")[0];
+    $("saveGoalBtn").textContent = "Update Goal";
+    $("goalModalTitle").textContent = "Edit Financial Goal";
+    updateGoalCurrentInputState();
+    openGoalForm();
   }
 
   function deleteGoal(id) {
     goals = goals.filter(g => g.id !== id);
     persist();
     renderGoalsPage();
-  }
-
-  function round2(n) {
-    return Math.round(Number(n || 0) * 100) / 100;
   }
 
   function renderSummary() {
@@ -1674,16 +1911,10 @@
   }
 
   function renderNetWorth() {
-    const cash = bankAccounts.reduce((s, a) => s + Number(a.amount || 0), 0);
-    const debt = loans.reduce((s, l) => s + Number(l.total || 0), 0);
-    const txBal =
-      transactions.filter(t => t.type === "income").reduce((s, t) => s + Number(t.amount || 0), 0) -
-      transactions.filter(t => t.type === "expense").reduce((s, t) => s + Number(t.amount || 0), 0);
-
-    const net = cash - debt + txBal;
+    const { cash, debt, txBal, networth } = getSnapshotValues();
     const el = $("netWorthValue");
-    el.textContent = (net < 0 ? "-" : "") + fmt(net);
-    el.className = "nw-value " + (net >= 0 ? "pos" : "neg");
+    el.textContent = (networth < 0 ? "-" : "") + fmt(networth);
+    el.className = "nw-value " + (networth >= 0 ? "pos" : "neg");
 
     $("nwCash").textContent = "Cash " + fmt(cash);
     $("nwDebt").textContent = "Debt " + fmt(debt);
@@ -1744,43 +1975,72 @@
     const el = $("goalsList");
 
     if (!goals.length) {
-      el.innerHTML = `<div style="text-align:center;padding:48px 20px;color:var(--muted);font-family:'DM Serif Display',serif;font-style:italic;font-size:16px;border:1px dashed var(--border);border-radius:18px;background:#fffdfb">No goals yet.<br><span style="font-size:12px;font-family:'DM Mono',monospace;letter-spacing:1px">Add your first goal to start tracking.</span></div>`;
+      el.innerHTML = `
+        <div style="text-align:center;padding:48px 20px;color:var(--muted);font-family:'DM Serif Display',serif;font-style:italic;font-size:16px;border:1px dashed var(--border);border-radius:18px;background:#fffdfb">
+          No goals yet.<br>
+          <span style="font-size:12px;font-family:'DM Mono',monospace;letter-spacing:1px">Add your first goal to start tracking.</span>
+        </div>
+      `;
       return;
     }
 
-    const tc = { savings: "var(--income)", debt: "var(--expense)", custom: "var(--gold)" };
+    const tc = {
+      savings: "var(--income)",
+      debt: "var(--expense)",
+      custom: "var(--gold)"
+    };
 
     el.innerHTML = goals.map(g => {
       const target = Number(g.target || 0);
-      const current = Number(g.current || 0);
+      const current = getGoalComputedCurrent(g);
       const pct = target > 0 ? Math.min(100, Math.round((current / target) * 100)) : 0;
       const rem = target - current;
 
       const targetDt = new Date((g.date || "") + "T00:00:00");
       const today = new Date();
-      today.setHours(0,0,0,0);
+      today.setHours(0, 0, 0, 0);
 
       let dLeft = 0;
       if (!isNaN(targetDt.getTime())) {
         dLeft = Math.ceil((targetDt - today) / 86400000);
       }
 
-      const dStr = dLeft > 0 ? dLeft + " days left" : dLeft === 0 ? "Due today!" : Math.abs(dLeft) + " days overdue";
-      const dColor = dLeft < 0 ? "var(--expense)" : dLeft <= 30 ? "var(--gold)" : "var(--muted)";
+      const dStr =
+        dLeft > 0 ? dLeft + " days left" :
+        dLeft === 0 ? "Due today!" :
+        Math.abs(dLeft) + " days overdue";
+
+      const dColor =
+        dLeft < 0 ? "var(--expense)" :
+        dLeft <= 30 ? "var(--gold)" :
+        "var(--muted)";
 
       return `
         <div class="goal-card ${esc(g.type || "custom")}">
-          <button class="goal-del" type="button" data-del-goal="${g.id}">×</button>
           <div class="goal-top">
-            <div class="goal-name">${esc(g.name)}</div>
-            <div class="goal-type-badge badge-${esc(g.type || "custom")}">${esc(g.type || "custom")}</div>
+            <div>
+              <div class="goal-name">${esc(g.name)}</div>
+              <div class="goal-linked">${esc(getLinkedTypeLabel(g.linkedType || "manual"))}</div>
+            </div>
+
+            <div class="goal-actions">
+              <div class="goal-type-badge badge-${esc(g.type || "custom")}">${esc(g.type || "custom")}</div>
+              <button class="goal-edit" type="button" data-edit-goal="${g.id}">Edit</button>
+              <button class="goal-del" type="button" data-del-goal="${g.id}">×</button>
+            </div>
           </div>
+
           ${g.notes ? `<div class="goal-notes">${esc(g.notes)}</div>` : ""}
+
           <div class="goal-amounts">
             <div class="goal-current" style="color:${tc[g.type] || "var(--gold)"}">${fmt(current)}</div>
             <div class="goal-target-info">of ${fmt(target)}<br>${fmt(rem)} remaining</div>
           </div>
-          <div class="goal-bar-bg"><div class="goal-bar-fill" style="width:${pct}%;background:${tc[g.type] || "var(--gold)"}"></div></div>
+
+          <div class="goal-bar-bg">
+            <div class="goal-bar-fill" style="width:${pct}%;background:${tc[g.type] || "var(--gold)"}"></div>
+          </div>
+
           <div class="goal-meta">
             <div class="goal-pct" style="color:${tc[g.type] || "var(--gold)"}">${pct}% complete</div>
             <div class="goal-right-meta">
@@ -1794,10 +2054,13 @@
   }
 
   function renderCharts() {
+    refreshMonthFilter();
     renderMainChart();
     renderDonut();
     renderBalance();
     renderCategoryList();
+    renderMonthlyBreakdown();
+    renderCategoryStats();
   }
 
   function getDateRange() {
@@ -2043,14 +2306,194 @@
     }).join("");
   }
 
+  function getMonthlyBuckets() {
+    const buckets = {};
+
+    transactions.forEach(t => {
+      if (!t.date) return;
+      const monthKey = t.date.slice(0, 7);
+      if (!buckets[monthKey]) {
+        buckets[monthKey] = { income: 0, expense: 0 };
+      }
+
+      if (t.type === "income") {
+        buckets[monthKey].income += Number(t.amount || 0);
+      } else if (t.type === "expense") {
+        buckets[monthKey].expense += Number(t.amount || 0);
+      }
+    });
+
+    return Object.entries(buckets)
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([month, values]) => ({
+        month,
+        income: round2(values.income),
+        expense: round2(values.expense),
+        net: round2(values.income - values.expense)
+      }));
+  }
+
+  function renderMonthlyBreakdown() {
+    if (!window.Chart) return;
+
+    const selectedMonth = getSelectedMonth();
+    let rows = getMonthlyBuckets();
+
+    if (selectedMonth !== "all") {
+      rows = rows.filter(r => r.month === selectedMonth);
+    }
+
+    const labels = rows.length
+      ? rows.map(r => {
+          const [y, m] = r.month.split("-");
+          return new Date(Number(y), Number(m) - 1, 1).toLocaleDateString("en-US", {
+            month: "short",
+            year: "2-digit"
+          });
+        })
+      : ["No Data"];
+
+    const incomeData = rows.length ? rows.map(r => r.income) : [0];
+    const expenseData = rows.length ? rows.map(r => r.expense) : [0];
+    const netData = rows.length ? rows.map(r => r.net) : [0];
+
+    if (monthlyCI) monthlyCI.destroy();
+
+    monthlyCI = new Chart($("monthlyChart").getContext("2d"), {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [
+          {
+            label: "Income",
+            data: incomeData,
+            backgroundColor: "rgba(103,185,141,0.75)",
+            borderColor: "#67b98d",
+            borderWidth: 1.5,
+            borderRadius: 5
+          },
+          {
+            label: "Expenses",
+            data: expenseData,
+            backgroundColor: "rgba(226,125,114,0.75)",
+            borderColor: "#e27d72",
+            borderWidth: 1.5,
+            borderRadius: 5
+          },
+          {
+            label: "Net",
+            type: "line",
+            data: netData,
+            borderColor: "#d9a64d",
+            backgroundColor: "rgba(217,166,77,0.18)",
+            borderWidth: 2,
+            tension: 0.35,
+            pointBackgroundColor: "#d9a64d",
+            pointRadius: 3,
+            yAxisID: "y"
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: "top",
+            labels: { boxWidth: 10, padding: 10, color: "#9a7b67" }
+          },
+          tooltip: {
+            backgroundColor: "#fffaf7",
+            titleColor: "#5d4637",
+            bodyColor: "#5d4637",
+            borderColor: "#efd8c7",
+            borderWidth: 1,
+            callbacks: {
+              label: (c) => ` ${c.dataset.label}: $${Number(c.parsed.y || 0).toLocaleString("en-US", { minimumFractionDigits: 2 })}`
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: "#f2e3d7" },
+            ticks: { color: "#9a7b67" }
+          },
+          y: {
+            grid: { color: "#f2e3d7" },
+            ticks: {
+              color: "#9a7b67",
+              callback: (v) => "$" + Number(v).toLocaleString()
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function renderCategoryStats() {
+    const el = $("categoryStatsList");
+    const filtered = getFilteredTransactions();
+    const totals = {};
+    let grandTotal = 0;
+
+    filtered.forEach(t => {
+      const category = t.category || "General";
+      const amount = Number(t.amount || 0);
+
+      if (!totals[category]) {
+        totals[category] = { income: 0, expense: 0, total: 0 };
+      }
+
+      if (t.type === "income") {
+        totals[category].income += amount;
+      } else if (t.type === "expense") {
+        totals[category].expense += amount;
+      }
+
+      totals[category].total += amount;
+      grandTotal += amount;
+    });
+
+    const rows = Object.entries(totals)
+      .map(([category, values]) => ({
+        category,
+        income: round2(values.income),
+        expense: round2(values.expense),
+        total: round2(values.total)
+      }))
+      .sort((a, b) => b.total - a.total);
+
+    if (!rows.length) {
+      el.innerHTML = '<div style="color:var(--muted);font-size:12px;font-style:italic">No category data yet</div>';
+      return;
+    }
+
+    el.innerHTML = rows.map(row => {
+      const pct = grandTotal > 0 ? Math.round((row.total / grandTotal) * 100) : 0;
+
+      return `
+        <div class="cat-row" style="align-items:flex-start;gap:10px;">
+          <div class="cat-name" style="width:92px;">${esc(row.category)}</div>
+          <div style="flex:1;">
+            <div class="cat-bar-bg" style="margin-top:6px;">
+              <div class="cat-bar-fill" style="width:${pct}%;background:var(--peach);"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:6px;font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);gap:8px;flex-wrap:wrap;">
+              <span>In ${fmt(row.income)}</span>
+              <span>Out ${fmt(row.expense)}</span>
+              <span>Total ${fmt(row.total)}</span>
+            </div>
+          </div>
+          <div class="cat-pct">${pct}%</div>
+        </div>
+      `;
+    }).join("");
+  }
+
   function renderNwChart() {
     if (!window.Chart) return;
 
-    const cash = bankAccounts.reduce((s, a) => s + Number(a.amount || 0), 0);
-    const debt = loans.reduce((s, l) => s + Number(l.total || 0), 0);
-    const txBal =
-      transactions.filter(t => t.type === "income").reduce((s, t) => s + Number(t.amount || 0), 0) -
-      transactions.filter(t => t.type === "expense").reduce((s, t) => s + Number(t.amount || 0), 0);
+    const { cash, debt, txBal, networth } = getSnapshotValues();
 
     if (nwCI) nwCI.destroy();
 
@@ -2059,7 +2502,7 @@
       data: {
         labels: ["Cash in Bank", "Tx Balance", "Total Debt", "Net Worth"],
         datasets: [{
-          data: [cash, txBal, -debt, cash + txBal - debt],
+          data: [cash, txBal, -debt, networth],
           backgroundColor: [
             "rgba(132,182,222,0.78)",
             "rgba(103,185,141,0.78)",
@@ -2133,27 +2576,48 @@
     $("cancelLoanBtn").addEventListener("click", () => closeForm("loanForm"));
     $("saveLoanBtn").addEventListener("click", addLoan);
 
-    $("openGoalFormBtn").addEventListener("click", openGoalForm);
-    $("closeGoalFormBtn").addEventListener("click", closeGoalForm);
+    $("openGoalFormBtn").addEventListener("click", () => {
+      resetGoalForm();
+      openGoalForm();
+    });
+
+    $("closeGoalFormBtn").addEventListener("click", () => {
+      resetGoalForm();
+      closeGoalForm();
+    });
+
     $("saveGoalBtn").addEventListener("click", saveGoal);
 
     $("amount").addEventListener("input", updateDebtNote);
     $("routeDebtSel").addEventListener("change", updateDebtNote);
+    $("gfLinkedType").addEventListener("change", updateGoalCurrentInputState);
+
+    if ($("monthFilter")) {
+      $("monthFilter").addEventListener("change", () => {
+        renderMonthlyBreakdown();
+        renderCategoryStats();
+      });
+    }
 
     document.addEventListener("click", (e) => {
       const txId = e.target.getAttribute("data-del-tx");
       const bankId = e.target.getAttribute("data-del-bank");
       const loanId = e.target.getAttribute("data-del-loan");
       const goalId = e.target.getAttribute("data-del-goal");
+      const editGoalId = e.target.getAttribute("data-edit-goal");
 
       if (txId) deleteTransaction(Number(txId));
       if (bankId) deleteBankAccount(Number(bankId));
       if (loanId) deleteLoan(Number(loanId));
       if (goalId) deleteGoal(Number(goalId));
+      if (editGoalId) editGoal(Number(editGoalId));
     });
 
     $("goalFormOverlay").addEventListener("click", (e) => {
-      if (e.target === $("goalFormOverlay")) closeGoalForm();
+      if (e.target === $("goalFormOverlay")) {
+        resetGoalForm();
+        closeGoalForm();
+      }
     });
   }
 
@@ -2171,6 +2635,7 @@
 
     bindEvents();
     setType("income");
+    updateGoalCurrentInputState();
     renderAll();
   }
 
